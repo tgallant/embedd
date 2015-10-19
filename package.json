@@ -1,0 +1,27 @@
+{
+  "name": "embeddit",
+  "version": "0.0.1",
+  "description": "Embed reddit comments about your page on your page!",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "browserify": {
+    "transform": [
+      "brfs",
+      "sassify"
+    ]
+  },
+  "author": "Tim Gallant",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "mustache": "^2.2.0",
+    "q": "^1.4.1",
+    "q-io": "^1.13.1"
+  },
+  "devDependencies": {
+    "brfs": "^1.4.1",
+    "browserify": "^11.2.0",
+    "sassify": "^0.9.1"
+  }
+}
