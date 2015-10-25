@@ -1,14 +1,8 @@
-var fs = require('fs');
 var mustache = require('mustache');
 var embedd = require('./src/embedd');
-var template = fs.readFileSync(__dirname + '/templates/comments.html', 'utf-8');
-
-var extend = function(o1, o2) {
-	var result={};
-	for(var key in o1) result[key]=o1[key];
-	for(var key in o2) result[key]=o2[key];
-	return result;
-};
+var css = require('./src/scss/app.scss');
+var mainTemplate = require('./src/templates/main.html');
+var commentTemplate = require('./src/templates/comment.html');
 
 var Context = function() {
 	this.config = {
@@ -18,26 +12,35 @@ var Context = function() {
 		both: true
 	};
 	
-	var userConfig = JSON.parse(this.config.element.innerHTML.trim());
+	var userConfig = this.config.element.innerHTML.length > 0
+				? JSON.parse(this.config.element.innerHTML.trim())
+				: {};
 	
-	this.config = extend(this.config, userConfig);
+	this.config = this.extend(this.config, userConfig);
 	console.log(this);
+};
+
+Context.prototype.extend = function(o1, o2) {
+	var result={};
+	for(var key in o1) result[key]=o1[key];
+	for(var key in o2) result[key]=o2[key];
+	return result;
 };
 
 Context.prototype.renderHtml = function(data) {
 	var self = this.config;
 	var parent = self.element.parentNode;
 	var container = document.createElement('div');
-	var html = mustache.render(template, data);
+	var html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
 	console.log(data);
 
-	container.className = 'embeddit-container';
+	container.className = 'embedd-container';
 	container.innerHTML = html;
 	parent.insertBefore(container, self.element);
 };
 
-Context.prototype.render = function(template) {
+Context.prototype.render = function() {
 	var self = this;
 	var e = new embedd(self.config);
 	e.fetch()
@@ -46,4 +49,4 @@ Context.prototype.render = function(template) {
 		});
 };
 
-new Context().render(template);
+new Context().render();

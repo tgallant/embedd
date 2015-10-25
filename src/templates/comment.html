@@ -1,0 +1,10 @@
+<div class="comment">
+  <div class="body">
+    {{& body_html}}
+  </div>
+  {{#replies}}
+    <div class="replies">
+      {{> comment}}
+    </div>
+  {{/replies}}
+</div>

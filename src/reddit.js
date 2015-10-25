@@ -22,6 +22,12 @@ Reddit.prototype.get = function(url) {
 	});
 };
 
+Reddit.prototype.decode = function(html) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+};
+
 Reddit.prototype.threadUrl = function(sub, id) {
 	return this.base + '/r/' + sub + '/comments/' + id + '.json';
 };
@@ -48,13 +54,14 @@ Reddit.prototype.comment = function(comment, op) {
 	var self = this;
 	var c = {
 		author: comment.author,
-		body_html: comment.body_html,
+		body_html: self.decode(comment.body_html),
 		created: comment.created_utc,
 		id: comment.id,
 		score: comment.score,
 		subreddit: op.subreddit,
 		permalink: self.base + op.permalink,
-		thread: self.base + op.permalink + comment.id
+		thread: self.base + op.permalink + comment.id,
+		replies: null
 	};
 
 	if(comment.replies && comment.replies.data.children.length > 0) {

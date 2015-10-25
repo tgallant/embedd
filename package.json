@@ -5,13 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify app.js > embeddit.js",
-    "watch": "watchify app.js -o embeddit.js"
-  },
-  "browserify": {
-    "transform": [
-      "brfs"
-    ]
+    "build": "webpack --progress --colors --optimize-minimize",
+    "watch": "webpack --progress --colors --watch"
   },
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",
@@ -20,8 +15,11 @@
     "promise": "^7.0.4"
   },
   "devDependencies": {
-    "brfs": "^1.4.1",
-    "browserify": "^11.2.0",
-    "watchify": "^3.4.0"
+    "css-loader": "^0.21.0",
+    "html-loader": "^0.3.0",
+    "node-sass": "^3.4.0",
+    "sass-loader": "^3.0.0",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.2"
   }
 }
