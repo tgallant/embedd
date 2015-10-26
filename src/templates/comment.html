@@ -1,10 +1,25 @@
-<div class="comment">
-  <div class="body">
-    {{& body_html}}
-  </div>
-  {{#replies}}
-    <div class="replies">
-      {{> comment}}
-    </div>
-  {{/replies}}
-</div>
+<article {{#isEven}}class="evenDepth"{{/isEven}}>
+
+	<aside>
+		<span>
+			<a href="https://www.reddit.com/user/{{author}}" target="_blank">{{author}}</a>
+		</span>
+		<span><b>{{score}} points</b></span>
+		<span><a href="{{permalink}}">{{subreddit}}</a></span>
+	</aside>
+
+  {{& body_html}}
+
+	<aside>
+		<span>
+			<a href="{{thread}}" target="_blank">View on Reddit</a>
+		</span>
+	</aside>
+
+	<div class="children">
+		{{#replies}}
+		{{> comment}}
+		{{/replies}}
+	</div>
+
+</article>

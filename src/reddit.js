@@ -50,8 +50,9 @@ Reddit.prototype.getThreads = function(ids) {
 	return Promise.all(threads);
 };
 
-Reddit.prototype.comment = function(comment, op) {
+Reddit.prototype.comment = function(comment, op, depth) {
 	var self = this;
+	var cdepth = depth || 0;
 	var c = {
 		author: comment.author,
 		body_html: self.decode(comment.body_html),
@@ -61,12 +62,15 @@ Reddit.prototype.comment = function(comment, op) {
 		subreddit: op.subreddit,
 		permalink: self.base + op.permalink,
 		thread: self.base + op.permalink + comment.id,
-		replies: null
+		replies: null,
+		depth: cdepth,
+		isEven: function() { return this.depth % 2 === 0; }
 	};
 
 	if(comment.replies && comment.replies.data.children.length > 0) {
+		var nxtDepth = cdepth + 1;
 		c.replies = comment.replies.data.children.map(function(r) {
-			return self.comment(r.data, op);
+			return self.comment(r.data, op, nxtDepth);
 		});
 	}
 
@@ -95,7 +99,8 @@ Reddit.prototype.mergeComments = function(comments) {
 				return {
 					score: score,
 					threads: comments.length,
-					comments: arr
+					comments: arr,
+					multiple: function() { return this.threads > 1; }
 				};
 			}
 			var data = comments[index];

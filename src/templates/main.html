@@ -1,8 +1,13 @@
-{{#data}}
-  {{#comments}}
-    {{> comment}}
-	{{/comments}}
-	{{^comments}}
-    <h3>No Comments</h3>
-	{{/comments}}
-{{/data}}
+<section>
+  {{#data}}
+    <h3>
+      {{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{service}}
+    </h3>
+    {{#comments}}
+      {{> comment}}
+	  {{/comments}}
+	  {{^comments}}
+      <h3>No Comments on Reddit</h3>
+	  {{/comments}}
+  {{/data}}
+</section>
