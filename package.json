@@ -4,9 +4,9 @@
   "description": "Embed reddit comments about your page on your page!",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "webpack-dev-server 'mocha!./tests/tests.js' --output-filename testBundle.js --content-base tests/",
     "build": "webpack --progress --colors --optimize-minimize",
-    "watch": "webpack --progress --colors --watch"
+    "watch": "webpack-dev-server --progress --colors --content-base dist/"
   },
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",
@@ -17,9 +17,12 @@
   "devDependencies": {
     "css-loader": "^0.21.0",
     "html-loader": "^0.3.0",
+    "mocha": "^2.3.3",
+    "mocha-loader": "^0.7.1",
     "node-sass": "^3.4.0",
     "sass-loader": "^3.0.0",
     "style-loader": "^0.13.0",
-    "webpack": "^1.12.2"
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.12.1"
   }
 }
