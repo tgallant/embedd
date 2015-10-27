@@ -2,24 +2,30 @@
 	
 	<aside>
 		<span>
+			<a class="hideChildrenBtn" href="javascript:void(0)"></a>
+		</span>
+		<span>
 			<a href="https://www.reddit.com/user/{{author}}" target="_blank">{{author}}</a>
 		</span>
 		<span><b>{{score}} points</b></span>
 		<span><a href="{{permalink}}">{{subreddit}}</a></span>
+		<span>{{created}}</span>
 	</aside>
 	
   {{& body_html}}
 
-	<aside>
+	<aside class="links">
 		<span>
 			<a href="{{thread}}" target="_blank">View on Reddit</a>
 		</span>
 	</aside>
 
+	{{#hasReplies}}
 	<div class="children">
 		{{#replies}}
 		{{> comment}}
 		{{/replies}}
 	</div>
+	{{/hasReplies}}
 
 </article>

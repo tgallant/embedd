@@ -1,9 +1,22 @@
 @import "bourbon/bourbon";
 @import "neat/neat";
 
+@include keyframes(embeddFadeIn) {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1
+  }
+}
+
 .embedd-container {
+  padding: 20px 0 40px 0;
+  @include animation(embeddFadeIn 500ms ease-in);
+  
   section {
     @include outer-container;
+    max-width: none;
 
     p, h3 {
       color: #333;
@@ -16,7 +29,7 @@
     
     article {
       @include span-columns(12);
-      padding: 20px;
+      padding: 10px;
       padding-top: 10px;
       margin-bottom: 10px;
       border: 1px solid #f2f2f2;
@@ -29,6 +42,11 @@
 
       span {
         margin-right: 5px;
+      }
+
+      .hideChildrenbtn::before {
+        content: "[ - ]";
+        font-style: normal;
       }
 
       blockquote {
@@ -47,6 +65,24 @@
     }
     article.evenDepth {
       background-color: #fff;
+    }
+      
+    article.closed {
+      .md, .links, .children {
+        display: none;
+      }
+      .hideChildrenBtn::before {
+        content: "[ + ]";
+      }
+      span {
+        font-style: italic;
+        opacity: 0.7;
+      }
+    }
+    @media only screen and (min-width: 640px) {
+      article {
+        padding: 20px;
+      }
     }
   }
 }

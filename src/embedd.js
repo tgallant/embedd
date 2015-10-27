@@ -1,4 +1,3 @@
-var Promise = require('promise');
 var reddit = require('./reddit');
 var hn = require('./hn');
 

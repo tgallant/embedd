@@ -40,13 +40,26 @@ Context.prototype.renderHtml = function(data) {
 	parent.insertBefore(container, self.element);
 };
 
-Context.prototype.render = function() {
+Context.prototype.hideChildren = function(e) {
+	console.log(e);
+	var el = e.target;
+	var parentComment = el.parentNode.parentNode.parentNode;
+	parentComment.classList.toggle('closed');
+};
+
+Context.prototype.init = function() {
 	var self = this;
 	var e = new embedd(self.config);
 	e.fetch()
 		.then(function(data) {
 			self.renderHtml(data);
+
+			var hideButtons = document.getElementsByClassName('hideChildrenBtn');
+
+			for(var i = 0; i < hideButtons.length; i++) {
+				hideButtons[i].addEventListener('click', self.hideChildren, false);
+			}
 		});
 };
 
-new Context().render();
+new Context().init();

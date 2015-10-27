@@ -1,13 +1,18 @@
 <section>
   {{#data}}
+    {{#hasReddit}}
     <h3>
       {{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{service}}
     </h3>
+    {{/hasReddit}}
+    
     {{#comments}}
       {{> comment}}
 	  {{/comments}}
+    
 	  {{^comments}}
       <h3>No Comments on Reddit</h3>
 	  {{/comments}}
+    
   {{/data}}
 </section>
