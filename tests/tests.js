@@ -1,5 +1,4 @@
 var expect = require('chai').expect;
-var assert = require('assert');
 var Reddit = require('../src/reddit');
 
 var url = 'https://www.eff.org/deeplinks/2015/10/closing-loopholes-europes-net-neutrality-compromise';
