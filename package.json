@@ -11,10 +11,10 @@
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "mustache": "^2.2.0",
-    "promise": "^7.0.4"
+    "mustache": "^2.2.0"
   },
   "devDependencies": {
+    "chai": "^3.4.0",
     "css-loader": "^0.21.0",
     "html-loader": "^0.3.0",
     "mocha": "^2.3.3",
