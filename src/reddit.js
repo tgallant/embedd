@@ -1,4 +1,7 @@
 var Reddit = function(url) {
+	if(!url)
+		throw new Error('The Reddit constructor requires a url');
+
 	var base = 'https://www.reddit.com';
 	var searchQs = '/search.json?q=url:';
 	var redditQuery = base + searchQs + url;
@@ -7,6 +10,9 @@ var Reddit = function(url) {
 };
 
 Reddit.prototype.get = function(url) {
+	if(!url)
+		throw new Error('No URL has been specified');
+	
 	return new Promise(function(resolve) {
 		var req = new XMLHttpRequest();
 		req.open('GET', url);
@@ -21,35 +27,28 @@ Reddit.prototype.get = function(url) {
 };
 
 Reddit.prototype.decode = function(html) {
-  var txt = document.createElement("textarea");
-  txt.innerHTML = html;
-  return txt.value;
+	if(!html)
+		return false;
+	
+	var txt = document.createElement("textarea");
+	txt.innerHTML = html;
+	return txt.value;
 };
 
 Reddit.prototype.threadUrl = function(sub, id) {
-	return this.base + '/r/' + sub + '/comments/' + id + '.json';
-};
-
-Reddit.prototype.getThreads = function(ids) {
-	var self = this;
-	var res = ids.response;
-
-	var activeThreads = res.data.children.filter(function(x) {
-		return !!x.data.num_comments;
-	});
-
-	var threads = activeThreads.map(function(x) {
-		return new Promise(function(resolve) {
-			var url = self.threadUrl(x.data.subreddit, x.data.id);
-			resolve(self.get(url));
-		});
-	});
-
-	return Promise.all(threads);
+	if(sub && id)
+		return this.base + '/r/' + sub + '/comments/' + id + '.json';
+	return false;
 };
 
 Reddit.prototype.parseDate = function(unix) {
+
 	var now = new Date().getTime() / 1000;
+
+	if(!unix || unix > now)
+		return false;
+	
+
 	var seconds = now - unix;
 	var minutes = Math.floor(seconds / 60);
 	var hours = Math.floor(minutes / 60);
@@ -66,9 +65,28 @@ Reddit.prototype.parseDate = function(unix) {
 	if(minutes === 1)
 		return '1 minute ago';
 	if(minutes > 0)
-		return minutes + ' minute ago';
+		return minutes + ' minutes ago';
 
 	return 'a few seconds ago';
+};
+
+Reddit.prototype.getThreads = function(ids) {
+	var self = this;
+	console.log(self);
+	var res = ids.response;
+
+	var activeThreads = res.data.children.filter(function(x) {
+		return !!x.data.num_comments;
+	});
+
+	var threads = activeThreads.map(function(x) {
+		return new Promise(function(resolve) {
+			var url = self.threadUrl(x.data.subreddit, x.data.id);
+			resolve(self.get(url));
+		});
+	});
+
+	return Promise.all(threads);
 };
 
 Reddit.prototype.comment = function(comment, op, depth) {
@@ -86,7 +104,8 @@ Reddit.prototype.comment = function(comment, op, depth) {
 		replies: null,
 		hasReplies: false,
 		depth: cdepth,
-		isEven: function() { return this.depth % 2 === 0; }
+		isEven: function() { return this.depth % 2 === 0; },
+		lowScore: function() { return this.score < 0; }
 	};
 
 	if(comment.replies && comment.replies.data.children.length > 0) {

@@ -1,4 +1,4 @@
-<article {{#isEven}} class="evenDepth"{{/isEven}}>
+<article {{#isEven}} class="evenDepth{{#lowScore}} closed{{/lowScore}}"{{/isEven}}>
 	
 	<aside>
 		<span>
@@ -11,8 +11,9 @@
 		<span><a href="{{permalink}}">{{subreddit}}</a></span>
 		<span>{{created}}</span>
 	</aside>
-	
+	{{#body_html}}
   {{& body_html}}
+	{{/body_html}}
 
 	<aside class="links">
 		<span>
