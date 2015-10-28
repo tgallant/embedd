@@ -72,7 +72,6 @@ Reddit.prototype.parseDate = function(unix) {
 
 Reddit.prototype.getThreads = function(ids) {
 	var self = this;
-	console.log(self);
 	var res = ids.response;
 
 	var activeThreads = res.data.children.filter(function(x) {

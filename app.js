@@ -41,7 +41,6 @@ Context.prototype.renderHtml = function(data) {
 };
 
 Context.prototype.hideChildren = function(e) {
-	console.log(e);
 	var el = e.target;
 	var parentComment = el.parentNode.parentNode.parentNode;
 	parentComment.classList.toggle('closed');
