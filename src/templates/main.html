@@ -1,10 +1,15 @@
-<section>
+<section {{#config.dark}}class="dark"{{/config.dark}}>
   {{#data}}
-    {{#hasReddit}}
-    <h3>
-      {{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{service}}
-    </h3>
-    {{/hasReddit}}
+    <div class="info">
+      {{#hasReddit}}
+        <h3>
+          {{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{config.service}}
+        </h3>
+      {{/hasReddit}}
+      <h5>
+        Powered by <a target="_blank" href="https://embedd.io">embedd.io</a>
+      </h5>
+    </div>
     
     {{#comments}}
       {{> comment}}

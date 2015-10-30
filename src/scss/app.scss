@@ -18,13 +18,20 @@
     @include outer-container;
     max-width: none;
 
-    p, h3 {
+    p, h3, h5 {
       color: #333;
     }
 
     a {
       color: #369;
       text-decoration: none;
+    }
+
+    .info {
+      text-align: center;
+      h3, h5 {
+        float: none;
+      }
     }
     
     article {
@@ -83,6 +90,18 @@
       article {
         padding: 20px;
       }
+      .info {
+        text-align: left;
+        h3 {
+          float: left;
+        }
+        h5 {
+          float: right;
+        }
+      }
     }
+  }
+  .dark {
+    @include filter(invert(90%));
   }
 }
