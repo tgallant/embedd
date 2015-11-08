@@ -2,15 +2,22 @@
   {{#data}}
     <div class="info">
       {{#hasReddit}}
-        <h3>
-          {{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{config.service}}
-        </h3>
+        <h3>{{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{config.service}}</h3>
       {{/hasReddit}}
       <h5>
         Powered by <a target="_blank" href="https://embedd.io">embedd.io</a>
       </h5>
     </div>
-    
+
+		<div class="buttons">
+			{{#hasReddit}}
+			<button class="reddit-btn button active">Reddit</button>
+			{{/hasReddit}}
+
+			{{#hasHn}}
+			<button class="hn-btn button">HN</button>
+			{{/hasHn}}
+		</div>
     {{#comments}}
       {{> comment}}
 	  {{/comments}}

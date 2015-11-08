@@ -28,9 +28,22 @@
     }
 
     .info {
+      display: inline-block;
       text-align: center;
+      width: 100%;
+
       h3, h5 {
         float: none;
+      }
+    }
+
+    .buttons {
+      button {
+        cursor: pointer;
+      }
+        
+      .active {
+        @include filter(invert(90%));
       }
     }
     

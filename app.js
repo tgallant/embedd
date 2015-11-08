@@ -6,16 +6,22 @@ var mainTemplate = require('./src/templates/main.html');
 var commentTemplate = require('./src/templates/comment.html');
 
 var Context = function() {
+	var script = document.currentScript;
+	var parent = script.parentNode;
+	var container = document.createElement('div');
+	container.className = 'embedd-container';
+	parent.insertBefore(container, script);
+	
 	this.config = {
-		element: document.currentScript,
+		element: container,
 		url: location.protocol + '//' + location.host + location.pathname,
 		dark: false,
 		service: 'reddit',
 		both: true
 	};
 	
-	var userConfig = this.config.element.innerHTML.length > 0
-				? JSON.parse(this.config.element.innerHTML.trim())
+	var userConfig = script.innerHTML.length > 0
+				? JSON.parse(script.innerHTML.trim())
 				: {};
 	
 	this.config = this.extend(this.config, userConfig);
@@ -35,24 +41,37 @@ Context.prototype.extend = function(o1, o2) {
 
 Context.prototype.initListeners = function() {
 	var self = this;
-	var hideButtons = document.getElementsByClassName('hideChildrenBtn');
+	var hideButtons = document.querySelectorAll('.embedd-container .hideChildrenBtn');
+	var redditBtn = document.querySelector('.embedd-container .reddit-btn');
+	var hnBtn = document.querySelector('.embedd-container .hn-btn');
 
 	for(var i = 0; i < hideButtons.length; i++) {
 		hideButtons[i].addEventListener('click', self.hideChildren, false);
 	}
+
+	redditBtn.addEventListener('click', function() {
+		self.config.service = 'reddit';
+		self.init();
+		redditBtn.classList.toggle('active');
+		hnBtn.classList.toggle('active');
+	}, false);
+
+	hnBtn.addEventListener('click', function() {
+		self.config.service = 'hn';
+		self.init();
+		redditBtn.classList.toggle('active');
+		hnBtn.classList.toggle('active');
+	}, false);
+	
 };
 
 Context.prototype.renderHtml = function(data) {
 	var self = this.config;
-	var parent = self.element.parentNode;
-	var container = document.createElement('div');
 	var html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
 	console.log(data);
 
-	container.className = 'embedd-container';
-	container.innerHTML = html;
-	parent.insertBefore(container, self.element);
+	self.element.innerHTML = html;
 	this.initListeners();
 };
 
