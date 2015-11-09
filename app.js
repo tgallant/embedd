@@ -49,24 +49,33 @@ Context.prototype.initListeners = function() {
 		hideButtons[i].addEventListener('click', self.hideChildren, false);
 	}
 
-	redditBtn.addEventListener('click', function() {
-		self.config.service = 'reddit';
-		self.init();
-		redditBtn.classList.toggle('active');
-		hnBtn.classList.toggle('active');
-	}, false);
-
-	hnBtn.addEventListener('click', function() {
-		self.config.service = 'hn';
-		self.init();
-		redditBtn.classList.toggle('active');
-		hnBtn.classList.toggle('active');
-	}, false);
+	if(redditBtn) {
+		redditBtn.addEventListener('click', function() {
+			self.config.service = 'reddit';
+			self.init();
+		}, false);
+	}
+	
+	if(hnBtn) {
+		hnBtn.addEventListener('click', function() {
+			self.config.service = 'hn';
+			self.init();
+		}, false);
+	}
 	
 };
 
 Context.prototype.renderHtml = function(data) {
 	var self = this.config;
+
+	data.redditActive = function() {
+		return self.service === 'reddit';
+	};
+
+	data.hnActive = function() {
+		return self.service === 'hn';
+	};
+	
 	var html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
 	console.log(data);

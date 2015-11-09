@@ -43,14 +43,15 @@ HN.prototype.comment = function(comment, op, depth) {
 	var cdepth = depth || 0;
 	var c = {
 		author: comment.author,
+		author_link: 'https://news.ycombinator.com/user?id=' + comment.author,
 		body_html: self.decode(comment.text),
 		created: self.parseDate(comment.created_at_i),
 		id: comment.id,
+		thread: 'https://news.ycombinator.com/item?id=' + comment.id,
 		replies: null,
 		hasReplies: false,
 		depth: cdepth,
-		isEven: function() { return this.depth % 2 === 0; },
-		lowScore: function() { return this.score < 0; }
+		isEven: function() { return this.depth % 2 === 0; }
 	};
 
 	if(comment.children && comment.children.length > 0) {
@@ -92,7 +93,7 @@ HN.prototype.mergeComments = function(comments) {
 				};
 			}
 			var data = comments[index];
-			var newScore = score += data.op.score;
+			var newScore = score += data.op.points;
 			var newComments = arr.concat(data.comments);
 			
 			return merge(newScore, newComments, index + 1);

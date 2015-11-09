@@ -12,10 +12,10 @@
 
 .embedd-container {
   padding: 20px 0 40px 0;
-  @include animation(embeddFadeIn 500ms ease-in);
   
   section {
     @include outer-container;
+    @include animation(embeddFadeIn 500ms ease-in);
     max-width: none;
 
     p, h3, h5 {
@@ -39,11 +39,17 @@
 
     .buttons {
       button {
+        background: #fff;
+        border: 1px solid #f2f2f2;
+        border-bottom: none;
         cursor: pointer;
+        opacity: 0.7;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
       }
         
       .active {
-        @include filter(invert(90%));
+        opacity: 1;
       }
     }
     
@@ -88,7 +94,7 @@
     }
       
     article.closed {
-      .md, .links, .children {
+      .md, .links, .children, p {
         display: none;
       }
       .hideChildrenBtn::before {
@@ -99,6 +105,7 @@
         opacity: 0.7;
       }
     }
+      
     @media only screen and (min-width: 640px) {
       article {
         padding: 20px;
@@ -115,6 +122,10 @@
     }
   }
   .dark {
+    img {
+      @include filter(invert(100%));
+    }
+
     @include filter(invert(90%));
   }
 }

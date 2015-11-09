@@ -4,12 +4,18 @@
 		<span>
 			<a class="hideChildrenBtn" href="javascript:void(0)"></a>
 		</span>
+		
 		<span>
-			<a href="https://www.reddit.com/user/{{author}}" target="_blank">{{author}}</a>
+			<a href="{{author_link}}" target="_blank">{{author}}</a>
 		</span>
-		<span><b>{{score}} points</b></span>
-		<span><a href="{{permalink}}">{{subreddit}}</a></span>
-		<span>{{created}}</span>
+		
+		{{#redditActive}}
+		{{#score}}<span><b>{{score}} points</b></span>{{/score}}
+		{{/redditActive}}
+		
+		{{#permalink}}<span><a href="{{permalink}}">{{subreddit}}</a></span>{{/permalink}}
+
+		{{#created}}<span>{{created}}</span>{{/created}}
 	</aside>
 
 	{{#body_html}}
@@ -18,7 +24,7 @@
 
 	<aside class="links">
 		<span>
-			<a href="{{thread}}" target="_blank">View on Reddit</a>
+			<a href="{{thread}}" target="_blank">view on {{config.service}}</a>
 		</span>
 	</aside>
 

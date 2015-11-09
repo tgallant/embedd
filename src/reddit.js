@@ -44,6 +44,7 @@ Reddit.prototype.comment = function(comment, op, depth) {
 	var cdepth = depth || 0;
 	var c = {
 		author: comment.author,
+		author_link: 'https://www.reddit.com/user/' + comment.author,
 		body_html: self.decode(comment.body_html),
 		created: self.parseDate(comment.created_utc),
 		id: comment.id,

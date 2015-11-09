@@ -1,29 +1,38 @@
-<section {{#config.dark}}class="dark"{{/config.dark}}>
+<section{{#config.dark}} class="dark"{{/config.dark}}>
   {{#data}}
     <div class="info">
       {{#hasReddit}}
-        <h3>{{score}} upvotes over {{threads}} thread{{#multiple}}s{{/multiple}} on {{config.service}}</h3>
+        <h3>{{score}} upvotes {{#multiple}}over {{threads}} threads{{/multiple}} on {{config.service}}</h3>
       {{/hasReddit}}
       <h5>
         Powered by <a target="_blank" href="https://embedd.io">embedd.io</a>
       </h5>
     </div>
 
+		{{#config.both}}
+		{{#hasReddit}}
+		{{#hasHn}}
 		<div class="buttons">
-			{{#hasReddit}}
-			<button class="reddit-btn button active">Reddit</button>
-			{{/hasReddit}}
+			<button class="reddit-btn button{{#redditActive}} active{{/redditActive}}">
+				<img src="//i.imgur.com/I3JS7Ew.gif"/>
+				Reddit
+			</button>
 
-			{{#hasHn}}
-			<button class="hn-btn button">HN</button>
-			{{/hasHn}}
+			<button class="hn-btn button{{#hnActive}} active{{/hnActive}}">
+				<img src="//i.imgur.com/ByLiuCS.gif" />
+				HN
+			</button>
 		</div>
+		{{/hasHn}}
+		{{/hasReddit}}
+		{{/config.both}}
+		
     {{#comments}}
       {{> comment}}
 	  {{/comments}}
     
 	  {{^comments}}
-      <h3>No Comments on Reddit</h3>
+      <h3>No Comments on {{config.service}}</h3>
 	  {{/comments}}
     
   {{/data}}
