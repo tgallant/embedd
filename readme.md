@@ -15,14 +15,16 @@ You can get started right now by adding the following script tag to
 your website.
 
 
-```<script src="https://embedd.io/embedd.min.js"></script>```
+``` html
+<script src="https://embedd.io/embedd.min.js"></script>
+```
 
 
 The default behavior is to search reddit and HackerNews for all posts
 that link to the URL of the current page. For each reddit and
-HackerNews, if there are multiple threads with comments, it will merge
+HackerNews, if there are multiple threads with comments it will merge
 them together in a single thread. If your post has been posted in both
-places, there will be a button to toggle between the views. It will
+places there will be a button to toggle between the views. It will
 default to showing reddit comments first.
 
 There are various configuration options you can set to alter the
@@ -30,7 +32,7 @@ behavior as stated above.
 
 Here is an example with all possible configuration options set.
 
-```
+``` html
 <script src="embedd.js">
 	{
 		"url": "https://www.eff.org/deeplinks/2015/10/closing-loopholes-europes-net-neutrality-compromise",
