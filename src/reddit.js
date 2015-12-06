@@ -1,140 +1,133 @@
 var Embedd = require('./embedd');
 
-var Reddit = function(url) {
+var redditConstructor = function(url) {
 	if(!url)
 		throw new Error('The Reddit constructor requires a url');
 
 	var base = 'https://www.reddit.com';
 	var searchQs = '/search.json?q=url:';
 	var redditQuery = base + searchQs + url;
-	this.base = base;
 
-	Embedd.call(this, redditQuery);
-};
-
-Reddit.prototype = Object.create(Embedd.prototype);
-Reddit.prototype.constructor = Reddit;
-
-Reddit.prototype.threadUrl = function(sub, id) {
-	if(sub && id)
-		return this.base + '/r/' + sub + '/comments/' + id + '.json';
-	return false;
-};
-
-Reddit.prototype.getThreads = function(ids) {
-	var self = this;
-	var res = ids.response;
-
-	var activeThreads = res.data.children.filter(function(x) {
-		return !!x.data.num_comments;
-	});
-
-	var threads = activeThreads.map(function(x) {
-		return new Promise(function(resolve) {
-			var url = self.threadUrl(x.data.subreddit, x.data.id);
-			resolve(self.get(url));
-		});
-	});
-
-	return Promise.all(threads);
-};
-
-Reddit.prototype.comment = function(comment, op, depth) {
-	var self = this;
-	var cdepth = depth || 0;
-	var c = {
-		author: comment.author,
-		author_link: 'https://www.reddit.com/user/' + comment.author,
-		body_html: self.decode(comment.body_html),
-		created: self.parseDate(comment.created_utc),
-		id: comment.id,
-		score: comment.score,
-		subreddit: op.subreddit,
-		permalink: self.base + op.permalink,
-		thread: self.base + op.permalink + comment.id,
-		replies: null,
-		hasReplies: false,
-		depth: cdepth,
-		isEven: function() { return this.depth % 2 === 0; },
-		lowScore: function() { return this.score < 0; }
+	var self = Embedd(redditQuery);
+	
+	function threadUrl(sub, id) {
+		if(sub && id)
+			return base + '/r/' + sub + '/comments/' + id + '.json';
+		return false;
 	};
 
-	if(comment.replies && comment.replies.data.children.length > 0) {
-		var nxtDepth = cdepth + 1;
+	function getThreads(ids) {
+		var res = ids.response;
 
-		c.hasReplies = true;
-		c.replies = comment.replies.data.children.map(function(r) {
-			return self.comment(r.data, op, nxtDepth);
+		var activeThreads = res.data.children.filter(function(x) {
+			return !!x.data.num_comments;
 		});
-	}
 
-	return c;
-};
-
-Reddit.prototype.parseComments = function(threads) {
-	var self = this;
-	return new Promise(function(resolve) {
-		var cs = threads.map(function(x) {
-			var res = x.response;
-			var op = res[0].data.children[0].data;
-			var comments = res[1].data.children.map(function(c) {
-				return self.comment(c.data, op);
+		var threads = activeThreads.map(function(x) {
+			return new Promise(function(resolve) {
+				var url = threadUrl(x.data.subreddit, x.data.id);
+				resolve(self.get(url));
 			});
-			return { op: op, comments: comments };
 		});
-		resolve(cs);
-	});
-};
 
-Reddit.prototype.mergeComments = function(comments) {
-	return new Promise(function(resolve) {
-		var merge = function(score, arr, index) {
-			if(index > comments.length - 1) {
-				return {
-					score: score,
-					threads: comments.length,
-					comments: arr,
-					multiple: function() { return this.threads > 1; }
-				};
-			}
-			var data = comments[index];
-			var newScore = score += data.op.score;
-			var newComments = arr.concat(data.comments);
-			
-			return merge(newScore, newComments, index + 1);
+		return Promise.all(threads);
+	};
+
+	function commentConstructor(comment, op, depth) {
+		var cdepth = depth || 0;
+		var c = {
+			author: comment.author,
+			author_link: 'https://www.reddit.com/user/' + comment.author,
+			body_html: self.decode(comment.body_html),
+			created: self.parseDate(comment.created_utc),
+			id: comment.id,
+			score: comment.score,
+			subreddit: op.subreddit,
+			permalink: base + op.permalink,
+			thread: base + op.permalink + comment.id,
+			replies: null,
+			hasReplies: false,
+			depth: cdepth,
+			isEven: function() { return this.depth % 2 === 0; },
+			lowScore: function() { return this.score < 0; }
 		};
 
-		var merged = merge(0, [], 0);
-		merged.comments = merged.comments.sort(function(a, b) {
-			return b.score - a.score;
-		});
-		
-		resolve(merged);
-	});
-};
+		if(comment.replies && comment.replies.data.children.length > 0) {
+			var nxtDepth = cdepth + 1;
 
-Reddit.prototype.hasComments = function() {
-	var self = this;
-	return new Promise(function(resolve) {
-		self.data.then(function(data) {
-			var res = data.response;
-			var threads = res.data.children.filter(function(x) {
-				return !!x.data.num_comments;
+			c.hasReplies = true;
+			c.replies = comment.replies.data.children.map(function(r) {
+				return commentConstructor(r.data, op, nxtDepth);
 			});
-			resolve(!!threads.length);
+		}
+
+		return c;
+	};
+
+	function parseComments(threads) {
+		return new Promise(function(resolve) {
+			var cs = threads.map(function(x) {
+				var res = x.response;
+				var op = res[0].data.children[0].data;
+				var comments = res[1].data.children.map(function(c) {
+					return commentConstructor(c.data, op);
+				});
+				return { op: op, comments: comments };
+			});
+			resolve(cs);
 		});
-	});
+	};
+
+	function mergeComments(comments) {
+		return new Promise(function(resolve) {
+			var merge = function(score, arr, index) {
+				if(index > comments.length - 1) {
+					return {
+						score: score,
+						threads: comments.length,
+						comments: arr,
+						multiple: function() { return this.threads > 1; }
+					};
+				}
+				var data = comments[index];
+				var newScore = score += data.op.score;
+				var newComments = arr.concat(data.comments);
+				
+				return merge(newScore, newComments, index + 1);
+			};
+
+			var merged = merge(0, [], 0);
+			merged.comments = merged.comments.sort(function(a, b) {
+				return b.score - a.score;
+			});
+			
+			resolve(merged);
+		});
+	};
+
+	self.hasComments = function() {
+		return new Promise(function(resolve) {
+			self.data.then(function(data) {
+				var res = data.response;
+				var threads = res.data.children.filter(function(x) {
+					return !!x.data.num_comments;
+				});
+				resolve(!!threads.length);
+			});
+		});
+	};
+
+	self.getComments = function() {
+		return new Promise(function(resolve) {
+			self.data
+				.then(getThreads)
+				.then(parseComments)
+				.then(mergeComments)
+				.then(resolve);
+		});
+	};
+
+	return self;
 };
 
-Reddit.prototype.getComments = function() {
-	var self = this;
-	return new Promise(function(resolve) {
-		self.data
-			.then(self.getThreads.bind(self))
-			.then(self.parseComments.bind(self))
-			.then(self.mergeComments.bind(self))
-			.then(resolve);
-	});
-};
-
-module.exports = Reddit;
+module.exports = redditConstructor;
