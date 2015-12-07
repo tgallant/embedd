@@ -1,133 +1,67 @@
-var Embedd = require('./embedd');
+import {decode, parseDate, embeddConstructor} from './embedd';
 
-var redditConstructor = function(url) {
+function redditConstructor(url) {
 	if(!url)
 		throw new Error('The Reddit constructor requires a url');
 
-	var base = 'https://www.reddit.com';
-	var searchQs = '/search.json?q=url:';
-	var redditQuery = base + searchQs + url;
-
-	var self = Embedd(redditQuery);
+	var embeddSpec = {};
 	
-	function threadUrl(sub, id) {
-		if(sub && id)
-			return base + '/r/' + sub + '/comments/' + id + '.json';
-		return false;
-	};
+	embeddSpec.base = 'https://www.reddit.com';
+	embeddSpec.searchQs = '/search.json?q=url:';
+	embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
 
-	function getThreads(ids) {
-		var res = ids.response;
-
-		var activeThreads = res.data.children.filter(function(x) {
-			return !!x.data.num_comments;
-		});
-
-		var threads = activeThreads.map(function(x) {
-			return new Promise(function(resolve) {
-				var url = threadUrl(x.data.subreddit, x.data.id);
-				resolve(self.get(url));
+	embeddSpec.dataFmt = function(data) {
+		return new Promise(function(resolve) {
+			var res = data.response;
+			res.hits = res.data.children.map(function(x) {
+				x = x.data;
+				return x;
 			});
+			resolve(res);
 		});
-
-		return Promise.all(threads);
 	};
 
-	function commentConstructor(comment, op, depth) {
-		var cdepth = depth || 0;
-		var c = {
+	embeddSpec.commentFmt = function(comment) {
+		return {
 			author: comment.author,
 			author_link: 'https://www.reddit.com/user/' + comment.author,
-			body_html: self.decode(comment.body_html),
-			created: self.parseDate(comment.created_utc),
+			body_html: decode(comment.body_html),
+			created: parseDate(comment.created_utc),
 			id: comment.id,
 			score: comment.score,
-			subreddit: op.subreddit,
-			permalink: base + op.permalink,
-			thread: base + op.permalink + comment.id,
 			replies: null,
 			hasReplies: false,
-			depth: cdepth,
 			isEven: function() { return this.depth % 2 === 0; },
 			lowScore: function() { return this.score < 0; }
 		};
-
-		if(comment.replies && comment.replies.data.children.length > 0) {
-			var nxtDepth = cdepth + 1;
-
-			c.hasReplies = true;
-			c.replies = comment.replies.data.children.map(function(r) {
-				return commentConstructor(r.data, op, nxtDepth);
-			});
-		}
-
-		return c;
 	};
 
-	function parseComments(threads) {
-		return new Promise(function(resolve) {
-			var cs = threads.map(function(x) {
-				var res = x.response;
-				var op = res[0].data.children[0].data;
-				var comments = res[1].data.children.map(function(c) {
-					return commentConstructor(c.data, op);
+	embeddSpec.threadFmt = function(thread) {
+		var childrenFmt = function(child) {
+			child.points = child.score;
+			if(child.replies) {
+				child.children = child.replies.data.children.map(function(x) {
+					x = x.data;
+					if(x.replies) {
+						x.children = childrenFmt(x);
+					}
+					return x;
 				});
-				return { op: op, comments: comments };
-			});
-			resolve(cs);
+			}
+			return child;
+		};
+		
+		var op = thread[0].data.children[0].data;
+		op.points = op.score;
+		op.children = thread[1].data.children.map(function(x) {
+			x = x.data;
+			return childrenFmt(x);
 		});
+		return op;
 	};
+	
+	return embeddConstructor(embeddSpec);
 
-	function mergeComments(comments) {
-		return new Promise(function(resolve) {
-			var merge = function(score, arr, index) {
-				if(index > comments.length - 1) {
-					return {
-						score: score,
-						threads: comments.length,
-						comments: arr,
-						multiple: function() { return this.threads > 1; }
-					};
-				}
-				var data = comments[index];
-				var newScore = score += data.op.score;
-				var newComments = arr.concat(data.comments);
-				
-				return merge(newScore, newComments, index + 1);
-			};
-
-			var merged = merge(0, [], 0);
-			merged.comments = merged.comments.sort(function(a, b) {
-				return b.score - a.score;
-			});
-			
-			resolve(merged);
-		});
-	};
-
-	self.hasComments = function() {
-		return new Promise(function(resolve) {
-			self.data.then(function(data) {
-				var res = data.response;
-				var threads = res.data.children.filter(function(x) {
-					return !!x.data.num_comments;
-				});
-				resolve(!!threads.length);
-			});
-		});
-	};
-
-	self.getComments = function() {
-		return new Promise(function(resolve) {
-			self.data
-				.then(getThreads)
-				.then(parseComments)
-				.then(mergeComments)
-				.then(resolve);
-		});
-	};
-
-	return self;
 };
 
-module.exports = redditConstructor;
+export default redditConstructor;

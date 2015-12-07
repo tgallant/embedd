@@ -1,8 +1,9 @@
-require('babel-polyfill');
-var mustache = require('mustache');
-var reddit = require('./reddit');
-var hn = require('./hn');
-var css = require('./scss/app.scss');
+import 'babel-polyfill';
+import './scss/app.scss';
+import mustache from 'mustache';
+import redditConstructor from './reddit';
+import hnConstructor from './hn';
+
 var mainTemplate = require('./templates/main.html');
 var commentTemplate = require('./templates/comment.html');
 
@@ -32,16 +33,16 @@ function contextConstructor() {
 	self.clients = {};
 
 	if(self.config.both) {
-		self.clients.reddit = reddit(self.config.url);
-		self.clients.hn = hn(self.config.url);
+		self.clients.reddit = redditConstructor(self.config.url);
+		self.clients.hn = hnConstructor(self.config.url);
 	}
 
 	if(!self.config.both && self.config.service === 'reddit') {
-		self.clients.reddit = reddit(self.config.url);
+		self.clients.reddit = redditConstructor(self.config.url);
 	}
 
 	if(!self.config.both && self.config.service === 'hn') {
-		self.clients.hn = hn(self.config.url);
+		self.clients.hn = hnConstructor(self.config.url);
 	}
 
 	function extend(o1, o2) {
@@ -57,7 +58,7 @@ function contextConstructor() {
 		var hnBtn = document.querySelector('.embedd-container .hn-btn');
 
 		for(var i = 0; i < hideButtons.length; i++) {
-			hideButtons[i].addEventListener('click', self.hideChildren, false);
+			hideButtons[i].addEventListener('click', hideChildren, false);
 		}
 
 		if(redditBtn) {

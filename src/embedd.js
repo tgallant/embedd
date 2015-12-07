@@ -1,7 +1,45 @@
-function embeddConstructor(query) {
+export function decode(html) {
+	if(!html)
+		return false;
+	
+	var txt = document.createElement("textarea");
+	txt.innerHTML = html;
+	return txt.value;
+};
+
+export function parseDate(unix) {
+
+	var now = new Date().getTime() / 1000;
+
+	if(!unix || unix > now)
+		return false;
+	
+
+	var seconds = now - unix;
+	var minutes = Math.floor(seconds / 60);
+	var hours = Math.floor(minutes / 60);
+	var days = Math.floor(hours / 24);
+
+	if(days === 1)
+		return '1 day ago';
+	if(days > 0)
+		return days + ' days ago';
+	if(hours === 1)
+		return '1 hour ago';
+	if(hours > 0)
+		return hours + ' hours ago';
+	if(minutes === 1)
+		return '1 minute ago';
+	if(minutes > 0)
+		return minutes + ' minutes ago';
+
+	return 'a few seconds ago';
+};
+
+export function embeddConstructor(spec) {
 	var self = {};
 	
-	self.get = function(url) {
+	function get(url) {
 		if(!url)
 			throw new Error('No URL has been specified');
 		
@@ -18,47 +56,122 @@ function embeddConstructor(query) {
 		});
 	};
 
-	self.decode = function(html) {
-		if(!html)
-			return false;
-		
-		var txt = document.createElement("textarea");
-		txt.innerHTML = html;
-		return txt.value;
+	function threadUrl(threadObj) {
+		var {sub, id} = threadObj;
+
+		if(sub && id) {
+			return spec.base + '/r/' + sub + '/comments/' + id + '.json';
+		}
+
+		if(!sub && id) {
+			return spec.base + id;
+		}
+
+		return false;
 	};
 
-	self.parseDate = function(unix) {
+	function getThreads(data) {
+		var activeThreads = data.hits.filter(function(x) {
+			return !!x.num_comments;
+		});
 
-		var now = new Date().getTime() / 1000;
+		var threads = activeThreads.map(function(x) {
+			return new Promise(function(resolve) {
+				var {id, subreddit} = x;
+				var url = threadUrl({ sub: subreddit, id: id });
+				resolve(get(url));
+			});
+		});
 
-		if(!unix || unix > now)
-			return false;
-		
-
-		var seconds = now - unix;
-		var minutes = Math.floor(seconds / 60);
-		var hours = Math.floor(minutes / 60);
-		var days = Math.floor(hours / 24);
-
-		if(days === 1)
-			return '1 day ago';
-		if(days > 0)
-			return days + ' days ago';
-		if(hours === 1)
-			return '1 hour ago';
-		if(hours > 0)
-			return hours + ' hours ago';
-		if(minutes === 1)
-			return '1 minute ago';
-		if(minutes > 0)
-			return minutes + ' minutes ago';
-
-		return 'a few seconds ago';
+		return Promise.all(threads);
 	};
-	
-	self.data = self.get(query);
+
+	function commentConstructor(commentObj) {
+		var {comment, op, depth} = commentObj;
+		var cdepth = depth || 0;
+		var c = spec.commentFmt(comment);
+		c.depth = cdepth;
+		c.subreddit = op.subreddit;
+
+		if(op.permalink) {
+			c.permalink = spec.base + op.permalink;
+			c.thread = spec.base + op.permalink + comment.id;
+		}
+
+		if(comment.children && comment.children.length > 0) {
+			var nxtDepth = cdepth + 1;
+
+			c.hasReplies = true;
+			c.replies = comment.children.map(function(r) {
+				return commentConstructor({ comment: r, op: op, depth: nxtDepth });
+			});
+		}
+
+		return c;
+	};
+
+	function parseComments(threads) {
+		return new Promise(function(resolve) {
+			var cs = threads.map(function(x) {
+				var op = spec.threadFmt(x.response);
+				var comments = op.children.map(function(c) {
+					return commentConstructor({ comment: c, op: op });
+				});
+				return { op: op, comments: comments };
+			});
+			resolve(cs);
+		});
+	};
+
+	function mergeComments(comments) {
+		return new Promise(function(resolve) {
+			var merge = function(score, arr, index) {
+				if(index > comments.length - 1) {
+					return {
+						score: score,
+						threads: comments.length,
+						comments: arr,
+						multiple: function() { return this.threads > 1; }
+					};
+				}
+				var data = comments[index];
+				var newScore = score += data.op.points;
+				var newComments = arr.concat(data.comments);
+				
+				return merge(newScore, newComments, index + 1);
+			};
+
+			var merged = merge(0, [], 0);
+			merged.comments = merged.comments.sort(function(a, b) {
+				return b.score - a.score;
+			});
+			
+			resolve(merged);
+		});
+	};
+
+	self.data = get(spec.query).then(spec.dataFmt);
+
+	self.hasComments = function() {
+		return new Promise(function(resolve) {
+			self.data.then(function(data) {
+				var threads = data.hits.filter(function(x) {
+					return !!x.num_comments;
+				});
+				resolve(!!threads.length);
+			});
+		});
+	};
+
+	self.getComments = function() {
+		return new Promise(function(resolve) {
+			self.data
+				.then(getThreads)
+				.then(parseComments)
+				.then(mergeComments)
+				.then(resolve);
+		});
+	};
 
 	return self;
 };
-
-module.exports = embeddConstructor;
