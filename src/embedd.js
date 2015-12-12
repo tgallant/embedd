@@ -36,6 +36,9 @@ export function parseDate(unix) {
 
 export function embeddConstructor(spec) {
 	if(!spec) throw new Error('No spec object has been specified');
+	if(!spec.dataFmt) throw new Error('dataFmt method isnt defined');
+	if(!spec.commentFmt) throw new Error('commentFmt method isnt defined');
+	if(!spec.threadFmt) throw new Error('threadFmt method isnt defined');
 	
 	let self = {};
 	
@@ -50,6 +53,8 @@ export function embeddConstructor(spec) {
 			req.addEventListener('load', () => {
 				resolve(req);
 			});
+
+			req.addEventListener('error', reject);
 
 			req.send();
 		});
@@ -78,6 +83,8 @@ export function embeddConstructor(spec) {
 			return new Promise((resolve, reject) => {
 				let {id, subreddit} = x,
 						url = threadUrl({ sub: subreddit, id: id });
+
+				if(id === 'undefined') reject(new Error('No ID specified'));
 				
 				resolve(get(url));
 			});
@@ -151,6 +158,10 @@ export function embeddConstructor(spec) {
 		});
 	};
 
+	function handleError(err) {
+		throw new Error(err);
+	};
+
 	self.data = get(spec.query).then(spec.dataFmt);
 
 	self.hasComments = () => {
@@ -167,10 +178,11 @@ export function embeddConstructor(spec) {
 	self.getComments = () => {
 		return new Promise((resolve, reject) => {
 			self.data
-				.then(getThreads)
-				.then(parseComments)
-				.then(mergeComments)
-				.then(resolve);
+				.then(getThreads, handleError)
+				.then(parseComments, handleError)
+				.then(mergeComments, handleError)
+				.then(resolve, handleError)
+				.catch(reject);
 		});
 	};
 

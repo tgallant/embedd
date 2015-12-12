@@ -123,6 +123,38 @@ describe('embeddConstructor', () => {
 		expect(embeddTest).to.throw('No spec object has been specified');
 	});
 
+	it('should throw an error if the spec object doesnt have a dataFmt method', () => {
+		function embeddTest() {
+			let embeddSpec = {};
+			
+			return embeddConstructor(embeddSpec);
+		};
+
+		expect(embeddTest).to.throw('dataFmt method isnt defined');
+	});
+
+	it('should throw an error if the spec object doesnt have a commentFmt method', () => {
+		function embeddTest() {
+			let embeddSpec = {};
+			embeddSpec.dataFmt = function() {};
+			
+			return embeddConstructor(embeddSpec);
+		};
+		
+		expect(embeddTest).to.throw('commentFmt method isnt defined');
+	});
+
+	it('should throw an error if the spec object doesnt have a threadFmt method', () => {
+		function embeddTest() {
+			let embeddSpec = {};
+			embeddSpec.dataFmt = function() {};
+			embeddSpec.commentFmt = function() {};
+			return embeddConstructor(embeddSpec);
+		};
+
+		expect(embeddTest).to.throw('threadFmt method isnt defined');
+	});
+	
 });
 
 describe('redditConstructor', () => {

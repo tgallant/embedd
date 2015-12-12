@@ -138,6 +138,8 @@ function contextConstructor() {
 				}
 				self.data = data[data.length - 1];
 				renderHtml(self);
+			}, err => {
+				throw new Error(err);
 			});
 	};
 
