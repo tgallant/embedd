@@ -1,10 +1,10 @@
 import {decode, parseDate, embeddConstructor} from './embedd';
 
-function redditConstructor(url) {
+export function redditConstructor(url) {
 	if(!url)
 		throw new Error('The Reddit constructor requires a url');
 
-	var embeddSpec = {};
+	let embeddSpec = {};
 	
 	embeddSpec.base = 'https://www.reddit.com';
 	embeddSpec.searchQs = '/search.json?q=url:';
@@ -12,7 +12,7 @@ function redditConstructor(url) {
 
 	embeddSpec.dataFmt = function(data) {
 		return new Promise(function(resolve) {
-			var res = data.response;
+			let res = data.response;
 			res.hits = res.data.children.map(function(x) {
 				x = x.data;
 				return x;
@@ -37,7 +37,7 @@ function redditConstructor(url) {
 	};
 
 	embeddSpec.threadFmt = function(thread) {
-		var childrenFmt = function(child) {
+		let childrenFmt = function(child) {
 			child.points = child.score;
 			if(child.replies) {
 				child.children = child.replies.data.children.map(function(x) {
@@ -51,7 +51,7 @@ function redditConstructor(url) {
 			return child;
 		};
 		
-		var op = thread[0].data.children[0].data;
+		let op = thread[0].data.children[0].data;
 		op.points = op.score;
 		op.children = thread[1].data.children.map(function(x) {
 			x = x.data;
@@ -63,5 +63,3 @@ function redditConstructor(url) {
 	return embeddConstructor(embeddSpec);
 
 };
-
-export default redditConstructor;

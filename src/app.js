@@ -1,17 +1,17 @@
 import 'babel-polyfill';
 import './scss/app.scss';
 import mustache from 'mustache';
-import redditConstructor from './reddit';
-import hnConstructor from './hn';
+import {redditConstructor} from './reddit';
+import {hnConstructor} from './hn';
 
-var mainTemplate = require('./templates/main.html');
-var commentTemplate = require('./templates/comment.html');
+const mainTemplate = require('./templates/main.html');
+const commentTemplate = require('./templates/comment.html');
 
 function contextConstructor() {
-	var self = {};
-	var script = document.currentScript;
-	var parent = script.parentNode;
-	var container = document.createElement('div');
+	let self = {},
+			script = document.currentScript,
+			parent = script.parentNode,
+			container = document.createElement('div');
 	
 	container.className = 'embedd-container';
 	parent.insertBefore(container, script);
@@ -24,7 +24,7 @@ function contextConstructor() {
 		both: true
 	};
 	
-	var userConfig = script.innerHTML.length > 0
+	let userConfig = script.innerHTML.length > 0
 				? JSON.parse(script.innerHTML.trim())
 				: {};
 	
@@ -46,16 +46,18 @@ function contextConstructor() {
 	}
 
 	function extend(o1, o2) {
-		var result={};
-		for(var key in o1) result[key]=o1[key];
-		for(var key in o2) result[key]=o2[key];
+		let result={};
+		
+		for(let key in o1) result[key]=o1[key];
+		for(let key in o2) result[key]=o2[key];
+		
 		return result;
 	};
 
 	function initListeners() {
-		var hideButtons = document.querySelectorAll('.embedd-container .hideChildrenBtn');
-		var redditBtn = document.querySelector('.embedd-container .reddit-btn');
-		var hnBtn = document.querySelector('.embedd-container .hn-btn');
+		let hideButtons = document.querySelectorAll('.embedd-container .hideChildrenBtn'),
+				redditBtn = document.querySelector('.embedd-container .reddit-btn'),
+				hnBtn = document.querySelector('.embedd-container .hn-btn');
 
 		for(var i = 0; i < hideButtons.length; i++) {
 			hideButtons[i].addEventListener('click', hideChildren, false);
@@ -86,7 +88,7 @@ function contextConstructor() {
 			return self.config.service === 'hn';
 		};
 		
-		var html = mustache.render(mainTemplate, data, { comment : commentTemplate });
+		let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
 		console.log(data);
 
@@ -95,16 +97,17 @@ function contextConstructor() {
 	};
 
 	function hideChildren(e) {
-		var el = e.target;
-		var parentComment = el.parentNode.parentNode.parentNode;
+		let el = e.target,
+				parentComment = el.parentNode.parentNode.parentNode;
+		
 		parentComment.classList.toggle('closed');
 	};
 
 	function genData() {
-		var services = function() {
-			var serviceArray = [];
-			var {reddit, hn} = self.clients;
-			var service = self.clients[self.config.service];
+		let services = function() {
+			let serviceArray = [],
+					{reddit, hn} = self.clients,
+					service = self.clients[self.config.service];
 
 			if(reddit) {
 				serviceArray.push(reddit.hasComments());
@@ -118,8 +121,8 @@ function contextConstructor() {
 			
 			return serviceArray;
 		};
-
-		var arr = services();
+		
+		let arr = services();
 		
 		return Promise.all(arr);
 	};
@@ -139,5 +142,5 @@ function contextConstructor() {
 	return self;
 };
 
-var context = contextConstructor();
+const context = contextConstructor();
 context.init();

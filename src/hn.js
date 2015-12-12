@@ -1,18 +1,18 @@
 import {decode, parseDate, embeddConstructor} from './embedd';
 
-function hnConstructor(url) {
+export function hnConstructor(url) {
 	if(!url)
 		throw new Error('The HN constructor requires a url');
 
-	var searchBase = 'http://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query=';
-	var embeddSpec = {};
+	let searchBase = 'http://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query=',
+			embeddSpec = {};
 
 	embeddSpec.query = searchBase + url;
 	embeddSpec.base = 'http://hn.algolia.com/api/v1/items/';
 
 	embeddSpec.dataFmt = function(data) {
 		return new Promise(function(resolve) {
-			var res = data.response;
+			let res = data.response;
 			res.hits = res.hits.map(function(x) {
 				x.id = x.objectID;
 				return x;
@@ -42,5 +42,3 @@ function hnConstructor(url) {
 	return embeddConstructor(embeddSpec);
 
 };
-
-export default hnConstructor;
