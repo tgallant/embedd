@@ -1,3 +1,5 @@
+/*global require, location*/
+
 import 'babel-polyfill';
 import './scss/app.scss';
 import mustache from 'mustache';
@@ -55,23 +57,23 @@ function contextConstructor() {
 	};
 
 	function initListeners() {
-		let hideButtons = document.querySelectorAll('.embedd-container .hideChildrenBtn'),
+		let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn')),
 				redditBtn = document.querySelector('.embedd-container .reddit-btn'),
 				hnBtn = document.querySelector('.embedd-container .hn-btn');
 
-		for(var i = 0; i < hideButtons.length; i++) {
-			hideButtons[i].addEventListener('click', hideChildren, false);
-		}
+		hideButtons.forEach(x => {
+			x.addEventListener('click', hideChildren, false);
+		});
 
 		if(redditBtn) {
-			redditBtn.addEventListener('click', function() {
+			redditBtn.addEventListener('click', () => {
 				self.config.service = 'reddit';
 				self.init();
 			}, false);
 		}
 		
 		if(hnBtn) {
-			hnBtn.addEventListener('click', function() {
+			hnBtn.addEventListener('click', () => {
 				self.config.service = 'hn';
 				self.init();
 			}, false);
@@ -80,11 +82,11 @@ function contextConstructor() {
 	};
 
 	function renderHtml(data) {
-		data.redditActive = function() {
+		data.redditActive = () => {
 			return self.config.service === 'reddit';
 		};
 
-		data.hnActive = function() {
+		data.hnActive = () => {
 			return self.config.service === 'hn';
 		};
 		
@@ -104,7 +106,7 @@ function contextConstructor() {
 	};
 
 	function genData() {
-		let services = function() {
+		let services = () => {
 			let serviceArray = [],
 					{reddit, hn} = self.clients,
 					service = self.clients[self.config.service];
@@ -127,9 +129,9 @@ function contextConstructor() {
 		return Promise.all(arr);
 	};
 
-	self.init = function() {
+	self.init = () => {
 		genData()
-			.then(function(data) {
+			.then(data => {
 				self.hasReddit = data[0];
 				if(data.length === 3) {
 					self.hasHn = data[1];

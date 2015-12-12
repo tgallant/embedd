@@ -1,6 +1,5 @@
 export function decode(html) {
-	if(!html)
-		return false;
+	if(!html) return false;
 	
 	let txt = document.createElement("textarea");
 	txt.innerHTML = html;
@@ -12,8 +11,7 @@ export function parseDate(unix) {
 
 	let now = new Date().getTime() / 1000;
 
-	if(!unix || unix > now)
-		return false;
+	if(!unix || unix > now) return false;
 
 	let seconds = now - unix,
 			minutes = Math.floor(seconds / 60),
@@ -37,18 +35,19 @@ export function parseDate(unix) {
 };
 
 export function embeddConstructor(spec) {
+	if(!spec) throw new Error('No spec object has been specified');
+	
 	let self = {};
 	
 	function get(url) {
-		if(!url)
-			throw new Error('No URL has been specified');
+		if(!url) throw new Error('No URL has been specified');
 		
-		return new Promise(function(resolve) {
+		return new Promise((resolve, reject) => {
 			let req = new XMLHttpRequest();
 			req.open('GET', url);
 			req.responseType = 'json';
 
-			req.addEventListener('load', function() {
+			req.addEventListener('load', () => {
 				resolve(req);
 			});
 
@@ -71,12 +70,12 @@ export function embeddConstructor(spec) {
 	};
 
 	function getThreads(data) {
-		let activeThreads = data.hits.filter(function(x) {
+		let activeThreads = data.hits.filter(x => {
 			return !!x.num_comments;
 		});
 
-		var threads = activeThreads.map(function(x) {
-			return new Promise(function(resolve) {
+		var threads = activeThreads.map(x => {
+			return new Promise((resolve, reject) => {
 				let {id, subreddit} = x,
 						url = threadUrl({ sub: subreddit, id: id });
 				
@@ -104,7 +103,7 @@ export function embeddConstructor(spec) {
 			let nxtDepth = cdepth + 1;
 
 			c.hasReplies = true;
-			c.replies = comment.children.map(function(r) {
+			c.replies = comment.children.map(r => {
 				return commentConstructor({ comment: r, op: op, depth: nxtDepth });
 			});
 		}
@@ -113,10 +112,10 @@ export function embeddConstructor(spec) {
 	};
 
 	function parseComments(threads) {
-		return new Promise(function(resolve) {
-			var cs = threads.map(function(x) {
+		return new Promise((resolve, reject) => {
+			var cs = threads.map(x => {
 				var op = spec.threadFmt(x.response);
-				var comments = op.children.map(function(c) {
+				var comments = op.children.map(c => {
 					return commentConstructor({ comment: c, op: op });
 				});
 				return { op: op, comments: comments };
@@ -126,8 +125,8 @@ export function embeddConstructor(spec) {
 	};
 
 	function mergeComments(comments) {
-		return new Promise(function(resolve) {
-			let merge = function(score, arr, index) {
+		return new Promise((resolve, reject) => {
+			let merge = (score, arr, index) => {
 				if(index > comments.length - 1) {
 					return {
 						score: score,
@@ -144,7 +143,7 @@ export function embeddConstructor(spec) {
 			};
 
 			let merged = merge(0, [], 0);
-			merged.comments = merged.comments.sort(function(a, b) {
+			merged.comments = merged.comments.sort((a, b) => {
 				return b.score - a.score;
 			});
 			
@@ -154,10 +153,10 @@ export function embeddConstructor(spec) {
 
 	self.data = get(spec.query).then(spec.dataFmt);
 
-	self.hasComments = function() {
-		return new Promise(function(resolve) {
-			self.data.then(function(data) {
-				let threads = data.hits.filter(function(x) {
+	self.hasComments = () => {
+		return new Promise((resolve, reject) => {
+			self.data.then(data => {
+				let threads = data.hits.filter(x => {
 					return !!x.num_comments;
 				});
 				resolve(!!threads.length);
@@ -165,8 +164,8 @@ export function embeddConstructor(spec) {
 		});
 	};
 
-	self.getComments = function() {
-		return new Promise(function(resolve) {
+	self.getComments = () => {
+		return new Promise((resolve, reject) => {
 			self.data
 				.then(getThreads)
 				.then(parseComments)

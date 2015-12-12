@@ -1,8 +1,7 @@
 import {decode, parseDate, embeddConstructor} from './embedd';
 
 export function redditConstructor(url) {
-	if(!url)
-		throw new Error('The Reddit constructor requires a url');
+	if(!url) throw new Error('The Reddit constructor requires a url');
 
 	let embeddSpec = {};
 	
@@ -10,8 +9,8 @@ export function redditConstructor(url) {
 	embeddSpec.searchQs = '/search.json?q=url:';
 	embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
 
-	embeddSpec.dataFmt = function(data) {
-		return new Promise(function(resolve) {
+	embeddSpec.dataFmt = (data) => {
+		return new Promise((resolve, reject) => {
 			let res = data.response;
 			res.hits = res.data.children.map(function(x) {
 				x = x.data;
@@ -21,7 +20,7 @@ export function redditConstructor(url) {
 		});
 	};
 
-	embeddSpec.commentFmt = function(comment) {
+	embeddSpec.commentFmt = (comment) => {
 		return {
 			author: comment.author,
 			author_link: 'https://www.reddit.com/user/' + comment.author,
@@ -36,11 +35,11 @@ export function redditConstructor(url) {
 		};
 	};
 
-	embeddSpec.threadFmt = function(thread) {
-		let childrenFmt = function(child) {
+	embeddSpec.threadFmt = (thread) => {
+		let childrenFmt = (child) => {
 			child.points = child.score;
 			if(child.replies) {
-				child.children = child.replies.data.children.map(function(x) {
+				child.children = child.replies.data.children.map(x => {
 					x = x.data;
 					if(x.replies) {
 						x.children = childrenFmt(x);
@@ -53,7 +52,7 @@ export function redditConstructor(url) {
 		
 		let op = thread[0].data.children[0].data;
 		op.points = op.score;
-		op.children = thread[1].data.children.map(function(x) {
+		op.children = thread[1].data.children.map(x => {
 			x = x.data;
 			return childrenFmt(x);
 		});

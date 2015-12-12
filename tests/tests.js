@@ -1,3 +1,5 @@
+/*global describe, it*/
+
 import {expect} from 'chai';
 import {decode, parseDate, embeddConstructor} from '../src/embedd';
 import {redditConstructor} from '../src/reddit';

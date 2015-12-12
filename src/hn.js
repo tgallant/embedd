@@ -1,8 +1,7 @@
 import {decode, parseDate, embeddConstructor} from './embedd';
 
 export function hnConstructor(url) {
-	if(!url)
-		throw new Error('The HN constructor requires a url');
+	if(!url) throw new Error('The HN constructor requires a url');
 
 	let searchBase = 'http://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query=',
 			embeddSpec = {};
@@ -10,10 +9,10 @@ export function hnConstructor(url) {
 	embeddSpec.query = searchBase + url;
 	embeddSpec.base = 'http://hn.algolia.com/api/v1/items/';
 
-	embeddSpec.dataFmt = function(data) {
-		return new Promise(function(resolve) {
+	embeddSpec.dataFmt = (data) => {
+		return new Promise((resolve, reject) => {
 			let res = data.response;
-			res.hits = res.hits.map(function(x) {
+			res.hits = res.hits.map(x => {
 				x.id = x.objectID;
 				return x;
 			});
@@ -21,7 +20,7 @@ export function hnConstructor(url) {
 		});
 	};
 
-	embeddSpec.commentFmt = function(comment) {
+	embeddSpec.commentFmt = (comment) => {
 		return {
 			author: comment.author,
 			author_link: 'https://news.ycombinator.com/user?id=' + comment.author,
@@ -35,7 +34,7 @@ export function hnConstructor(url) {
 		};
 	};
 
-	embeddSpec.threadFmt = function(thread) {
+	embeddSpec.threadFmt = (thread) => {
 		return thread;
 	};
 
