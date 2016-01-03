@@ -55,6 +55,20 @@
         opacity: 1;
       }
     }
+
+    .more-btn-container {
+      text-align: center;
+    }
+
+    .more-btn {
+      border: 1px solid #f2f2f2;
+      border-radius: 3px;
+      background-color: #f5f5f5;
+      padding: 5px 10px;
+      margin: 10px 0;
+      cursor: pointer;
+      font-size: 16px;
+    }
     
     article {
       @include span-columns(12);

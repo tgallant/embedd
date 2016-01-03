@@ -40,7 +40,7 @@ export function embeddConstructor(spec) {
 	if(!spec.commentFmt) throw new Error('commentFmt method isnt defined');
 	if(!spec.threadFmt) throw new Error('threadFmt method isnt defined');
 	
-	let self = {};
+	let embedd = {};
 	
 	function get(url) {
 		if(!url) throw new Error('No URL has been specified');
@@ -60,9 +60,7 @@ export function embeddConstructor(spec) {
 		});
 	};
 
-	function threadUrl(threadObj) {
-		let {sub, id} = threadObj;
-
+	function threadUrl({ sub, id }) {
 		if(sub && id) {
 			return spec.base + '/r/' + sub + '/comments/' + id + '.json';
 		}
@@ -93,9 +91,8 @@ export function embeddConstructor(spec) {
 		return Promise.all(threads);
 	};
 
-	function commentConstructor(commentObj) {
-		let {comment, op, depth} = commentObj,
-				cdepth = depth || 0,
+	function commentConstructor({ comment, op, depth }) {
+		let cdepth = depth || 0,
 				c = spec.commentFmt(comment);
 		
 		c.depth = cdepth;
@@ -168,11 +165,11 @@ export function embeddConstructor(spec) {
 		throw new Error(err);
 	};
 
-	self.data = get(spec.query).then(spec.dataFmt);
+	embedd.data = get(spec.query).then(spec.dataFmt);
 
-	self.hasComments = () => {
+	embedd.hasComments = () => {
 		return new Promise((resolve, reject) => {
-			self.data.then(data => {
+			embedd.data.then(data => {
 				let threads = data.hits.filter(x => {
 					return !!x.num_comments;
 				});
@@ -181,9 +178,9 @@ export function embeddConstructor(spec) {
 		});
 	};
 
-	self.getComments = () => {
+	embedd.getComments = () => {
 		return new Promise((resolve, reject) => {
-			self.data
+			embedd.data
 				.then(getThreads, handleError)
 				.then(parseComments, handleError)
 				.then(mergeComments, handleError)
@@ -192,5 +189,5 @@ export function embeddConstructor(spec) {
 		});
 	};
 
-	return self;
+	return embedd;
 };

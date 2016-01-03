@@ -10,7 +10,7 @@ const mainTemplate = require('./templates/main.html');
 const commentTemplate = require('./templates/comment.html');
 
 function contextConstructor() {
-	let self = {},
+	let context = {},
 			script = document.currentScript,
 			parent = script.parentNode,
 			container = document.createElement('div');
@@ -18,7 +18,7 @@ function contextConstructor() {
 	container.className = 'embedd-container';
 	parent.insertBefore(container, script);
 	
-	self.config = {
+	context.config = {
 		element: container,
 		url: location.protocol + '//' + location.host + location.pathname,
 		dark: false,
@@ -32,21 +32,21 @@ function contextConstructor() {
 				? JSON.parse(script.innerHTML.trim())
 				: {};
 	
-	self.config = extend(self.config, userConfig);
+	context.config = extend(context.config, userConfig);
 
-	self.clients = {};
+	context.clients = {};
 
-	if(self.config.both) {
-		self.clients.reddit = redditConstructor(self.config);
-		self.clients.hn = hnConstructor(self.config);
+	if(context.config.both) {
+		context.clients.reddit = redditConstructor(context.config);
+		context.clients.hn = hnConstructor(context.config);
 	}
 
-	if(!self.config.both && self.config.service === 'reddit') {
-		self.clients.reddit = redditConstructor(self.config.url);
+	if(!context.config.both && context.config.service === 'reddit') {
+		context.clients.reddit = redditConstructor(context.config.url);
 	}
 
-	if(!self.config.both && self.config.service === 'hn') {
-		self.clients.hn = hnConstructor(self.config.url);
+	if(!context.config.both && context.config.service === 'hn') {
+		context.clients.hn = hnConstructor(context.config.url);
 	}
 
 	function extend(o1, o2) {
@@ -75,21 +75,21 @@ function contextConstructor() {
 
 		if(redditBtn) {
 			redditBtn.addEventListener('click', () => {
-				self.config.service = 'reddit';
-				self.init();
+				context.config.service = 'reddit';
+				context.init();
 			}, false);
 		}
 		
 		if(hnBtn) {
 			hnBtn.addEventListener('click', () => {
-				self.config.service = 'hn';
-				self.init();
+				context.config.service = 'hn';
+				context.init();
 			}, false);
 		}
 
 		if(moreBtn) {
 			moreBtn.addEventListener('click', () => {
-				renderMore(self);
+				renderMore(context);
 			}, false);
 		}
 		
@@ -97,29 +97,33 @@ function contextConstructor() {
 
 	function renderHtml(data) {
 		data.redditActive = () => {
-			return self.config.service === 'reddit';
+			return context.config.service === 'reddit';
 		};
 
 		data.hnActive = () => {
-			return self.config.service === 'hn';
+			return context.config.service === 'hn';
 		};
 		
 		let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
 		console.log(data);
 
-		self.config.element.innerHTML = html;
+		context.config.element.innerHTML = html;
 		initListeners();
 	};
 
-	function renderMore(obj) {
-		let {data, config} = obj,
-				template = '{{#comments}}{{> comment}}{{/comments}}',
+	function renderMore({ data, config, redditActive }) {
+		let template = '{{#comments}}{{> comment}}{{/comments}}',
 				element = document.querySelector('.embedd-container .comments');
 		
 		data.comments = data.next.slice(0, config.limit);
 		data.next = data.next.slice(config.limit);
+		data.config = config;
 		data.hasMore = !!data.next.length;
+
+		if(redditActive) {
+			data.redditActive = redditActive;
+		}
 
 		let html = mustache.render(template, data, { comment : commentTemplate });
 		element.insertAdjacentHTML('beforeend', html);
@@ -174,8 +178,8 @@ function contextConstructor() {
 	function genData() {
 		let services = () => {
 			let serviceArray = [],
-					{reddit, hn} = self.clients,
-					service = self.clients[self.config.service];
+					{reddit, hn} = context.clients,
+					service = context.clients[context.config.service];
 
 			if(reddit) {
 				serviceArray.push(reddit.hasComments());
@@ -195,21 +199,21 @@ function contextConstructor() {
 		return Promise.all(arr);
 	};
 
-	self.init = () => {
+	context.init = () => {
 		genData()
 			.then(data => {
-				self.hasReddit = data[0];
+				context.hasReddit = data[0];
 				if(data.length === 3) {
-					self.hasHn = data[1];
+					context.hasHn = data[1];
 				}
-				self.data = data[data.length - 1];
-				renderHtml(self);
+				context.data = data[data.length - 1];
+				renderHtml(context);
 			}, err => {
 				throw new Error(err);
 			});
 	};
 
-	return self;
+	return context;
 };
 
 const context = contextConstructor();
