@@ -1,4 +1,4 @@
-<article {{#isEven}}class="evenDepth{{#lowScore}} closed{{/lowScore}}"{{/isEven}}>
+<article class="{{#isEven}}evenDepth{{/isEven}} {{#lowScore}}closed{{/lowScore}}">
 	
 	<aside>
 		<span>
@@ -8,7 +8,6 @@
 		<span>
 			<a href="{{author_link}}" target="_blank">{{author}}</a>
 		</span>
-		
 		{{#redditActive}}
 		{{#score}}<span><b>{{score}} points</b></span>{{/score}}
 		{{/redditActive}}
@@ -34,6 +33,13 @@
 		{{> comment}}
 		{{/replies}}
 	</div>
+
+	{{#loadMore}}
+	<div class="viewMore">
+		<a href="javascript:void(0)">view more comments</a>
+	</div>
+	{{/loadMore}}
+	
 	{{/hasReplies}}
 
 </article>

@@ -79,7 +79,7 @@ export function embeddConstructor(spec) {
 			return !!x.num_comments;
 		});
 
-		var threads = activeThreads.map(x => {
+		var threads = activeThreads.slice(0,10).map(x => {
 			return new Promise((resolve, reject) => {
 				let {id, subreddit} = x,
 						url = threadUrl({ sub: subreddit, id: id });
@@ -111,8 +111,10 @@ export function embeddConstructor(spec) {
 
 			c.hasReplies = true;
 			c.replies = comment.children.map(r => {
-				return commentConstructor({ comment: r, op: op, depth: nxtDepth });
+				return commentConstructor({comment: r, op: op, depth: nxtDepth });
 			});
+
+			c.loadMore = c.replies.length > 4;
 		}
 
 		return c;
@@ -150,9 +152,13 @@ export function embeddConstructor(spec) {
 			};
 
 			let merged = merge(0, [], 0);
-			merged.comments = merged.comments.sort((a, b) => {
+			let sorted = merged.comments.sort((a, b) => {
 				return b.score - a.score;
 			});
+
+			merged.comments = sorted.slice(0, spec.limit);
+			merged.next = sorted.slice(spec.limit);
+			merged.hasMore = !!merged.next.length;
 			
 			resolve(merged);
 		});

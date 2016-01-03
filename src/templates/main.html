@@ -26,11 +26,17 @@
 		{{/hasHn}}
 		{{/hasReddit}}
 		{{/config.both}}
-		
+
+		<div class="comments">
     {{#comments}}
-      {{> comment}}
+    {{> comment}}
 	  {{/comments}}
-    
+		</div>
+
+		{{#config.loadMore}}
+		<button class="button more-btn">More</button>
+		{{/config.loadMore}}
+		
 	  {{^comments}}
       <h3>No Comments on {{config.service}}</h3>
 	  {{/comments}}

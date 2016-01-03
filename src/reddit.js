@@ -1,13 +1,15 @@
 import {decode, parseDate, embeddConstructor} from './embedd';
 
-export function redditConstructor(url) {
-	if(!url) throw new Error('The Reddit constructor requires a url');
+export function redditConstructor(spec) {
+	if(!spec) throw new Error('The Reddit constructor requires a spec object');
 
-	let embeddSpec = {};
+	let {url, limit} = spec,
+			embeddSpec = {};
 	
 	embeddSpec.base = 'https://www.reddit.com';
 	embeddSpec.searchQs = '/search.json?q=url:';
 	embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
+	embeddSpec.limit = limit;
 
 	embeddSpec.dataFmt = (data) => {
 		return new Promise((resolve, reject) => {

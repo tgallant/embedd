@@ -23,7 +23,9 @@ function contextConstructor() {
 		url: location.protocol + '//' + location.host + location.pathname,
 		dark: false,
 		service: 'reddit',
-		both: true
+		both: true,
+		loadMore: true,
+		limit: 5
 	};
 	
 	let userConfig = script.innerHTML.length > 0
@@ -35,8 +37,8 @@ function contextConstructor() {
 	self.clients = {};
 
 	if(self.config.both) {
-		self.clients.reddit = redditConstructor(self.config.url);
-		self.clients.hn = hnConstructor(self.config.url);
+		self.clients.reddit = redditConstructor(self.config);
+		self.clients.hn = hnConstructor(self.config);
 	}
 
 	if(!self.config.both && self.config.service === 'reddit') {
@@ -59,10 +61,16 @@ function contextConstructor() {
 	function initListeners() {
 		let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn')),
 				redditBtn = document.querySelector('.embedd-container .reddit-btn'),
-				hnBtn = document.querySelector('.embedd-container .hn-btn');
+				hnBtn = document.querySelector('.embedd-container .hn-btn'),
+				viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore')),
+				moreBtn = document.querySelector('.embedd-container .more-btn');
 
 		hideButtons.forEach(x => {
 			x.addEventListener('click', hideChildren, false);
+		});
+
+		viewMoreBtns.forEach(x => {
+			x.addEventListener('click', showMoreComments, false);
 		});
 
 		if(redditBtn) {
@@ -76,6 +84,12 @@ function contextConstructor() {
 			hnBtn.addEventListener('click', () => {
 				self.config.service = 'hn';
 				self.init();
+			}, false);
+		}
+
+		if(moreBtn) {
+			moreBtn.addEventListener('click', () => {
+				renderMore(self);
 			}, false);
 		}
 		
@@ -98,11 +112,63 @@ function contextConstructor() {
 		initListeners();
 	};
 
+	function renderMore(obj) {
+		let {data, config} = obj,
+				template = '{{#comments}}{{> comment}}{{/comments}}',
+				element = document.querySelector('.embedd-container .comments');
+		
+		data.comments = data.next.slice(0, config.limit);
+		data.next = data.next.slice(config.limit);
+		data.hasMore = !!data.next.length;
+
+		let html = mustache.render(template, data, { comment : commentTemplate });
+		element.insertAdjacentHTML('beforeend', html);
+
+		if(!data.hasMore) {
+			document.querySelector('.embedd-container .more-btn').style.display = 'none';
+		}
+		
+		initListeners();
+	};
+
 	function hideChildren(e) {
 		let el = e.target,
 				parentComment = el.parentNode.parentNode.parentNode;
 		
 		parentComment.classList.toggle('closed');
+	};
+
+	function showMoreComments(e) {
+		let el = e.currentTarget,
+				parent = el.parentElement,
+				comments = parent.querySelector('.children');
+
+		function showComment(c, count) {
+
+			if(c && count !== 3) {
+				if(c instanceof Text || getDisplayVal(c) === 'block') {
+					showComment(c.nextSibling, count);
+				}
+				else {
+					c.style.display = 'block';
+					showComment(c.nextSibling, count + 1);
+				}
+			}
+			else {
+				parent.querySelector('.viewMore').style.display = 'none';
+			}
+		};
+
+		showComment(comments.firstChild, 0);
+	};
+
+	function getDisplayVal(el) {
+		if (el.currentStyle) {
+			return el.currentStyle.display;
+		}
+		else {
+			return window.getComputedStyle(el, null).getPropertyValue("display");
+		}
 	};
 
 	function genData() {
