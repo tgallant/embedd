@@ -16,11 +16,9 @@ same if you download the code and host it yourself.
 You can get started right now by adding the following script tag to
 your website.
 
-
 ``` html
 <script src="https://embedd.io/embedd.min.js"></script>
 ```
-
 
 The default behavior is to search reddit and HackerNews for all posts
 that link to the URL of the current page. For each reddit and
@@ -45,27 +43,76 @@ Here is an example with all possible configuration options set.
 </script>
 ```
 
-**url**: (**Default**: current URL) The `url` option will use the URL
+**url**: (default: current URL) The `url` option will use the URL
   that is passed as the search query for reddit and/or HackerNews.
 
-**dark**: (**Default**: `false`) The `dark` option will enable the
+**element**: (default: a new DOM element is created) The `element`
+  option allows you to use a custom DOM element for containing the
+  generated HTML. It accepts strings in the form of a query selector,
+  e.g "#embeddSection" or ".commentSection .hnComments".
+
+**dark**: (default: `false`) The `dark` option will enable the
   dark theme. This is optimal for sites with a dark background.
 
-**both**: (**Default**: `true`) The `both` option is for only
+**both**: (default: `true`) The `both` option is for only
   displaying comments from a single service. If `service` is not set,
   setting this option will default to only display reddit comments.
 
-**service**: (**Default**: reddit) The `service` option sets which
+**service**: (default: "reddit") The `service` option sets which
   service to display comments from on page load. Possible options are
   `"reddit"` and `"hn"`.
+
+**limit**: (default: 5) The `limit` option sets how many top-level
+  comments to display at a time. Setting `limit` to 0 will display all
+  top-level comments.
+
+**loadMore**: (default: `true`) The `loadMore` option toggles whether
+  or not to display a "Load More" button. (works in conjunction with
+  the `limit` option.)
+
+**infiniteScroll*: (default: `false`) Setting this to `true` will
+  enable infinite scrolling, where more comments will be loaded as you
+  reach the end of the page. (works in conjunction with the `limit`
+  option.)
+
+**debug**: (default: `false`) Setting this to `true` will enable some
+  useful data to log out to the console.
 
 ## Contributing
 
 1. Fork it!
+
 2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
+
+3. Commit your changes: `git commit -am 'Add some feature'` (don't
+forget to add tests!)
+
 4. Push to the branch: `git push origin my-new-feature`
+
 5. Submit a pull request :D
+
+## Developing
+
+To develop locally, first clone the repo
+
+```
+git clone git@github.com:tgallant/embedd.git
+```
+
+Then run `npm install` in the embedd directory to download all of the
+dependencies.
+
+To start up a local server run
+
+```
+npm run watch
+```
+
+Then browse to http://localhost:8080/webpack-dev-server/
+
+The mocha tests will run automatically and the results will display in
+the browser.
+
 
 ## License
 
