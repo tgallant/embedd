@@ -14,10 +14,7 @@ function contextConstructor() {
 			script = document.currentScript,
 			parent = script.parentNode,
 			container = document.createElement('div');
-	
-	container.className = 'embedd-container';
-	parent.insertBefore(container, script);
-	
+		
 	context.config = {
 		element: container,
 		url: location.protocol + '//' + location.host + location.pathname,
@@ -25,8 +22,9 @@ function contextConstructor() {
 		service: 'reddit',
 		both: true,
 		loadMore: true,
-		infiniteScroll: false,
-		limit: 5
+		infiniteScroll: true,
+		limit: 5,
+		debug: false
 	};
 	
 	let userConfig = script.innerHTML.length > 0
@@ -34,6 +32,20 @@ function contextConstructor() {
 				: {};
 	
 	context.config = extend(context.config, userConfig);
+
+	if(typeof context.config.element === 'string') {
+		context.config.element = document.querySelector(context.config.element);
+	}
+	
+	context.config.element.className = 'embedd-container';
+	
+	if(context.config.element === container) {
+		parent.insertBefore(container, script);
+	}
+
+	if(context.config.loadMore && context.config.infiniteScroll) {
+		context.config.loadMore = false;
+	}
 
 	context.clients = {};
 
@@ -101,7 +113,7 @@ function contextConstructor() {
 	};
 
 	function loadOnScroll() {
-		let maxScroll = document.body.scrollHeight - document.body.clientHeight;
+		let maxScroll = context.config.element.scrollHeight - document.body.clientHeight;
 
 		if(maxScroll - window.scrollY < 20) {
 			window.removeEventListener('scroll', loadOnScroll, false);
@@ -120,7 +132,9 @@ function contextConstructor() {
 		
 		let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
-		console.log(data);
+		if(context.config.debug) {
+			console.log(data);
+		}
 
 		context.config.element.innerHTML = html;
 		initListeners();

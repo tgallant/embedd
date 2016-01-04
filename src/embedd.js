@@ -35,10 +35,11 @@ export function parseDate(unix) {
 };
 
 export function embeddConstructor(spec) {
-	if(!spec) throw new Error('No spec object has been specified');
-	if(!spec.dataFmt) throw new Error('dataFmt method isnt defined');
-	if(!spec.commentFmt) throw new Error('commentFmt method isnt defined');
-	if(!spec.threadFmt) throw new Error('threadFmt method isnt defined');
+	if(!spec) { throw new Error('No spec object has been specified'); }
+	if(!spec.dataFmt) { throw new Error('dataFmt method isnt defined'); }
+	if(!spec.commentFmt) { throw new Error('commentFmt method isnt defined'); }
+	if(!spec.threadFmt) { throw new Error('threadFmt method isnt defined'); }
+	if(spec.limit === 0) { spec.limit = null; }
 	
 	let embedd = {};
 	
@@ -153,8 +154,10 @@ export function embeddConstructor(spec) {
 				return b.score - a.score;
 			});
 
-			merged.comments = sorted.slice(0, spec.limit);
-			merged.next = sorted.slice(spec.limit);
+			let limit = spec.limit || sorted.length;
+
+			merged.comments = sorted.slice(0, limit);
+			merged.next = sorted.slice(limit);
 			merged.hasMore = !!merged.next.length;
 			
 			resolve(merged);
