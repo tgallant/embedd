@@ -42,7 +42,7 @@ Here is an example with all possible configuration options set.
 		"loadMore": false,
 		"infiniteScroll": true,
 		"limit": 10,
-		"debug: true
+		"debug": true
 	} 
 </script>
 ```
