@@ -38,6 +38,7 @@ Here is an example with all possible configuration options set.
 <script src="embedd.js">
 	{
 		"url": "https://www.eff.org/deeplinks/2015/10/closing-loopholes-europes-net-neutrality-compromise",
+		"element": "#embeddSection",
 		"dark": true,
 		"both": false,
 		"service": "hn",
