@@ -27,6 +27,8 @@ them together in a single thread. If your post has been posted in both
 places there will be a button to toggle between the views. It will
 default to showing reddit comments first.
 
+## Configuration
+
 There are various configuration options you can set to alter the
 behavior as stated above.
 
@@ -46,8 +48,6 @@ Here is an example with all possible configuration options set.
 	} 
 </script>
 ```
-
-## Configuration
 
 **url**: (default: current URL) The `url` option will use the URL
   that is passed as the search query for reddit and/or HackerNews.
