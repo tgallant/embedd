@@ -4,9 +4,8 @@
   "description": "Embed reddit comments about your page on your page!",
   "main": "app.js",
   "scripts": {
-    "test": "webpack-dev-server 'mocha!./tests/tests.js' --output-filename testBundle.js --content-base tests/",
-    "build": "webpack --progress --colors --optimize-minimize --output-filename embedd.min.js",
-    "watch": "webpack-dev-server --progress --colors --content-base example/"
+    "watch": "webpack-dev-server 'mocha!./tests/tests.js' --output-filename testBundle.js --content-base tests/",
+    "build": "webpack --progress --colors --optimize-minimize --output-filename embedd.min.js"
   },
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",

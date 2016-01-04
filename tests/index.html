@@ -8,12 +8,20 @@
 	<body>
 		<div>
 			<h1>hello!</h1>
+
+			<div id="embeddSection"></div>
+			
 			<script src="testBundle.js">
 				{
+				"element": "#embeddSection",
 				"url": "https://www.youtube.com/watch?v=l4bmZ1gRqCc",
 				"dark": true,
 				"both": true,
-				"service": "reddit"
+				"service": "reddit",
+				"loadMore": true,
+				"infiniteScroll": false,
+				"limit": 5,
+				"debug": false
 				} 
 			</script>
 		</div>

@@ -166,7 +166,7 @@ describe('redditConstructor', () => {
 			return redditConstructor();
 		};
 
-		expect(redditTest).to.throw('The Reddit constructor requires a url');
+		expect(redditTest).to.throw('The Reddit constructor requires a spec object');
 	});
 
 	it('should have a data property that is a promise', () => {
@@ -196,7 +196,7 @@ describe('hnConstructor', () => {
 			return hnConstructor();
 		};
 
-		expect(hnTest).to.throw('The HN constructor requires a url');
+		expect(hnTest).to.throw('The HN constructor requires a spec object');
 	});
 
 	it('should have a data property that is a promise', () => {
