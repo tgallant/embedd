@@ -25,6 +25,7 @@ function contextConstructor() {
 		service: 'reddit',
 		both: true,
 		loadMore: true,
+		infiniteScroll: false,
 		limit: 5
 	};
 	
@@ -92,7 +93,20 @@ function contextConstructor() {
 				renderMore(context);
 			}, false);
 		}
+
+		if(!context.config.loadMore && context.config.infiniteScroll) {
+			window.addEventListener('scroll', loadOnScroll, false);
+		}
 		
+	};
+
+	function loadOnScroll() {
+		let maxScroll = document.body.scrollHeight - document.body.clientHeight;
+
+		if(maxScroll - window.scrollY < 20) {
+			window.removeEventListener('scroll', loadOnScroll, false);
+			renderMore(context);
+		}
 	};
 
 	function renderHtml(data) {
@@ -129,7 +143,14 @@ function contextConstructor() {
 		element.insertAdjacentHTML('beforeend', html);
 
 		if(!data.hasMore) {
-			document.querySelector('.embedd-container .more-btn').style.display = 'none';
+			let moreBtn = document.querySelector('.embedd-container .more-btn');
+
+			if(moreBtn) {
+				moreBtn.style.display = 'none';
+			}
+			else {
+				window.removeEventListener('scroll', loadOnScroll, false);
+			}
 		}
 		
 		initListeners();
