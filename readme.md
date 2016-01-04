@@ -70,9 +70,9 @@ Here is an example with all possible configuration options set.
   or not to display a "Load More" button. (works in conjunction with
   the `limit` option.)
 
-**infiniteScroll*: (default: `false`) Setting this to `true` will
+**infiniteScroll**: (default: `false`) Setting this to `true` will
   enable infinite scrolling, where more comments will be loaded as you
-  reach the end of the page. (works in conjunction with the `limit`
+  reach the end of the section. (works in conjunction with the `limit`
   option.)
 
 **debug**: (default: `false`) Setting this to `true` will enable some
@@ -113,6 +113,15 @@ Then browse to http://localhost:8080/webpack-dev-server/
 The mocha tests will run automatically and the results will display in
 the browser.
 
+## Build
+
+To build a minified version run
+
+```
+npm run build
+```
+
+The new build will be in the `dist/` directory.
 
 ## License
 
