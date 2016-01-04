@@ -1,5 +1,5 @@
-@import "bourbon/bourbon";
-@import "neat/neat";
+@import "bourbon";
+@import "neat";
 
 @include keyframes(embeddFadeIn) {
   from {
@@ -43,12 +43,19 @@
         border: 1px solid #f2f2f2;
         border-bottom: none;
         padding: 1px 6px;
+        padding-top: 2px;
         cursor: pointer;
         opacity: 0.7;
+        line-height: 22px;
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
         border-bottom-left-radius: 0px;
         border-bottom-right-radius: 0px;
+      }
+
+      img {
+        position: relative;
+        top: 3px;
       }
         
       .active {
@@ -145,6 +152,9 @@
       }
     }
   }
+  .hasBtns .comments > article:first-of-type {
+      border-top-left-radius: 0;
+    }
   .dark {
     img {
       @include filter(invert(100%));

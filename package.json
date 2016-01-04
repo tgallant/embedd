@@ -12,7 +12,9 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "babel-polyfill": "^6.3.14",
-    "mustache": "^2.2.0"
+    "mustache": "^2.2.0",
+    "node-bourbon": "^4.2.3",
+    "node-neat": "^1.7.2"
   },
   "devDependencies": {
     "babel-core": "^6.3.15",
