@@ -22,7 +22,7 @@ function contextConstructor() {
 		service: 'reddit',
 		both: true,
 		loadMore: true,
-		infiniteScroll: true,
+		infiniteScroll: false,
 		limit: 5,
 		debug: false
 	};
