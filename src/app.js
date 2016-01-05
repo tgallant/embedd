@@ -129,6 +129,10 @@ function contextConstructor() {
 		data.hnActive = () => {
 			return context.config.service === 'hn';
 		};
+
+		if(data.data.next.length === 0) {
+			data.config.loadMore = false;
+		}
 		
 		let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
