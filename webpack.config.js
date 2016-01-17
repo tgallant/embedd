@@ -13,7 +13,7 @@ module.exports = {
   module: {
     loaders: [
 			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel?presets[]=es2015'},
-      { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader!' },
+      { test: /\.scss$/, loaders: ['style', 'css', 'sass'] },
 			{ test: /\.html$/, loader: 'html-loader?minimize=false' }
     ]
   },
