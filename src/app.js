@@ -55,11 +55,11 @@ function contextConstructor() {
 	}
 
 	if(!context.config.both && context.config.service === 'reddit') {
-		context.clients.reddit = redditConstructor(context.config.url);
+		context.clients.reddit = redditConstructor(context.config);
 	}
 
 	if(!context.config.both && context.config.service === 'hn') {
-		context.clients.hn = hnConstructor(context.config.url);
+		context.clients.hn = hnConstructor(context.config);
 	}
 
 	function extend(o1, o2) {
