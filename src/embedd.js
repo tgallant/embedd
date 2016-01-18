@@ -108,9 +108,13 @@ export function embeddConstructor(spec) {
 			let nxtDepth = cdepth + 1;
 
 			c.hasReplies = true;
-			c.replies = comment.children.map(r => {
-				return commentConstructor({comment: r, op: op, depth: nxtDepth });
-			});
+			c.replies = comment.children.reduce((arr, r) => {
+				if(r.author) {
+					arr.push(commentConstructor({comment: r, op: op, depth: nxtDepth }));
+				}
+
+				return arr;
+			}, []);
 
 			c.loadMore = c.replies.length > 4;
 		}
@@ -122,9 +126,13 @@ export function embeddConstructor(spec) {
 		return new Promise((resolve, reject) => {
 			var cs = threads.map(x => {
 				var op = spec.threadFmt(x.response);
-				var comments = op.children.map(c => {
-					return commentConstructor({ comment: c, op: op });
-				});
+				var comments = op.children.reduce((arr, c) => {
+					if(c.author) {
+						arr.push(commentConstructor({ comment: c, op: op }));
+					}
+
+					return arr;
+				},[]);
 				return { op: op, comments: comments };
 			});
 			resolve(cs);
