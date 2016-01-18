@@ -3,12 +3,12 @@ import {decode, parseDate, embeddConstructor} from './embedd';
 export function hnConstructor(spec) {
 	if(!spec) throw new Error('The HN constructor requires a spec object');
 
-	let searchBase = 'http://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query=',
+	let searchBase = 'https://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query=',
 			{url, limit} = spec,
 			embeddSpec = {};
 
 	embeddSpec.query = searchBase + url;
-	embeddSpec.base = 'http://hn.algolia.com/api/v1/items/';
+	embeddSpec.base = 'https://hn.algolia.com/api/v1/items/';
 	embeddSpec.limit = limit;
 
 	embeddSpec.dataFmt = (data) => {
