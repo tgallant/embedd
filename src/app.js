@@ -113,8 +113,7 @@ function contextConstructor() {
 	};
 
 	function loadOnScroll() {
-		let maxScroll = context.config.element.scrollHeight - document.body.clientHeight;
-
+		let maxScroll =  document.body.scrollHeight - window.innerHeight;
 		if(maxScroll - window.scrollY < 20) {
 			window.removeEventListener('scroll', loadOnScroll, false);
 			renderMore(context);
