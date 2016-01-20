@@ -9,8 +9,6 @@ separate third party (other than reddit and HackerNews). I am hosting
 the file at https://embedd.io/embedd.min.js but it will work just the
 same if you download the code and host it yourself.
 
-![example using the dark theme](https://embedd.io/embedd_example.png)
-
 ## Usage
 
 You can get started right now by adding the following script tag to
