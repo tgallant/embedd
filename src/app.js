@@ -216,12 +216,19 @@ function contextConstructor() {
 	context.init = () => {
 		let {reddit, hn} = context.clients;
 		let service = context.clients[context.config.service];
+		let data = {};
 
-		async.series({
-			hasHn: hn.hasComments,
-			hasReddit: reddit.hasComments,
-			data: service.getComments
-		}, (err, result) => {
+		if(hn) {
+			data.hasHn = hn.hasComments;
+		}
+
+		if(reddit) {
+			data.hasReddit = reddit.hasComments;
+		}
+
+		data.data = service.getComments;
+		
+		async.series(data, (err, result) => {
 			context = extend(context, result);
 			renderHtml(context);
 		});
