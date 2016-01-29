@@ -3,23 +3,20 @@ import {decode, parseDate, embeddConstructor} from './embedd';
 export function redditConstructor(spec) {
 	if(!spec) throw new Error('The Reddit constructor requires a spec object');
 
-	let {url, limit} = spec,
-			embeddSpec = {};
+	let {url, limit} = spec;
+	let embeddSpec = {};
 	
 	embeddSpec.base = 'https://www.reddit.com';
 	embeddSpec.searchQs = '/search.json?q=url:';
 	embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
 	embeddSpec.limit = limit;
 
-	embeddSpec.dataFmt = (data) => {
-		return new Promise((resolve, reject) => {
-			let res = data.response;
-			res.hits = res.data.children.map(function(x) {
-				x = x.data;
-				return x;
-			});
-			resolve(res);
+	embeddSpec.dataFmt = ({response}, cb) => {
+		response.hits = response.data.children.map(function(x) {
+			x = x.data;
+			return x;
 		});
+		cb(null, response);
 	};
 
 	embeddSpec.commentFmt = (comment) => {
@@ -62,5 +59,4 @@ export function redditConstructor(spec) {
 	};
 	
 	return embeddConstructor(embeddSpec);
-
-};
+}

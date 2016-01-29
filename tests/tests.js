@@ -5,19 +5,18 @@ import {decode, parseDate, embeddConstructor} from '../src/embedd';
 import {redditConstructor} from '../src/reddit';
 import {hnConstructor} from '../src/hn';
 
-const url = 'https://www.eff.org/deeplinks/2015/10/closing-loopholes-europes-net-neutrality-compromise';
-
-function isPromise(x) {
-	return x instanceof Promise;
+const spec = {
+	url: 'https://www.eff.org/deeplinks/2015/10/closing-loopholes-europes-net-neutrality-compromise',
+	limit: 5
 };
 
 function isBoolean(x) {
 	return typeof x === 'boolean';
-};
+}
 
 function verifyComments(obj) {
 	return !!(obj.comments && obj.score && obj.threads);
-};
+}
 
 describe('decode', () => {
 
@@ -26,12 +25,12 @@ describe('decode', () => {
     div.appendChild(document.createTextNode(str));
 		
     return div.innerHTML;
-	};
+	}
 	
 	it('should return valid html', () => {
-		let str = '<h1>hello</h1>',
-				encoded = escapeHtml(str),
-				html = decode(escapeHtml(str));
+		let str = '<h1>hello</h1>';
+		let encoded = escapeHtml(str);
+		let html = decode(escapeHtml(str));
 		
 		expect(html).to.equal(str);
 	});
@@ -118,7 +117,7 @@ describe('embeddConstructor', () => {
 	it('should throw an error if no spec object is passed', () => {
 		function embeddTest() {
 			return embeddConstructor();
-		};
+		}
 		
 		expect(embeddTest).to.throw('No spec object has been specified');
 	});
@@ -128,7 +127,7 @@ describe('embeddConstructor', () => {
 			let embeddSpec = {};
 			
 			return embeddConstructor(embeddSpec);
-		};
+		}
 
 		expect(embeddTest).to.throw('dataFmt method isnt defined');
 	});
@@ -147,8 +146,8 @@ describe('embeddConstructor', () => {
 	it('should throw an error if the spec object doesnt have a threadFmt method', () => {
 		function embeddTest() {
 			let embeddSpec = {};
-			embeddSpec.dataFmt = function() {};
-			embeddSpec.commentFmt = function() {};
+			embeddSpec.dataFmt = () => {};
+			embeddSpec.commentFmt = () => {};
 			return embeddConstructor(embeddSpec);
 		};
 
@@ -159,28 +158,24 @@ describe('embeddConstructor', () => {
 
 describe('redditConstructor', () => {
 
-	let reddit = redditConstructor(url);
+	let reddit = redditConstructor(spec);
 
 	it('should throw an error if no url has been specified', () => {
 		function redditTest() {
 			return redditConstructor();
-		};
+		}
 
 		expect(redditTest).to.throw('The Reddit constructor requires a spec object');
 	});
 
-	it('should have a data property that is a promise', () => {
-		expect(isPromise(reddit.data)).to.equal(true);
-	});
-
-	it('should have a hasComments method that returns a boolean', () => {
-		reddit.hasComments().then(data => {
+	it('should have a hasComments method that accepts a callback', () => {
+		reddit.hasComments((err, data) => {
 			expect(isBoolean(data)).to.equal(true);
 		});
 	});
 
 	it('should have a getComments method that returns a valid data object', () => {
-		reddit.getComments().then(data => {
+		reddit.getComments((err, data) => {
 			expect(verifyComments(data)).to.equal(true);
 		});
 	});
@@ -189,28 +184,24 @@ describe('redditConstructor', () => {
 
 describe('hnConstructor', () => {
 
-	let hn = hnConstructor(url);
+	let hn = hnConstructor(spec);
 
 	it('should throw an error if no url has been specified', () => {
 		function hnTest() {
 			return hnConstructor();
-		};
+		}
 
 		expect(hnTest).to.throw('The HN constructor requires a spec object');
 	});
 
-	it('should have a data property that is a promise', () => {
-		expect(isPromise(hn.data)).to.equal(true);
-	});
-
-	it('should have a hasComments method that returns a boolean', () => {
-		hn.hasComments().then(data => {
+	it('should have a hasComments method that accepts a callback', () => {
+		hn.hasComments((err, data) => {
 			expect(isBoolean(data)).to.equal(true);
 		});
 	});
 
 	it('should have a getComments method that returns a valid data object', () => {
-		hn.getComments().then(data => {
+		hn.getComments((err, data) => {
 			expect(verifyComments(data)).to.equal(true);
 		});
 	});

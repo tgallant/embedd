@@ -1,20 +1,20 @@
 /*global require, location*/
 
-import 'babel-polyfill';
 import './scss/app.scss';
+import async from 'async';
 import mustache from 'mustache';
-import {redditConstructor} from './reddit';
 import {hnConstructor} from './hn';
+import {redditConstructor} from './reddit';
 
 const mainTemplate = require('./templates/main.html');
 const commentTemplate = require('./templates/comment.html');
 
 function contextConstructor() {
-	let context = {},
-			script = document.currentScript,
-			parent = script.parentNode,
-			container = document.createElement('div');
-		
+	let context = {};
+	let script = document.currentScript;
+	let parent = script.parentNode;
+	let container = document.createElement('div');
+	
 	context.config = {
 		element: container,
 		url: location.protocol + '//' + location.host + location.pathname,
@@ -69,14 +69,14 @@ function contextConstructor() {
 		for(let key in o2) result[key]=o2[key];
 		
 		return result;
-	};
+	}
 
 	function initListeners() {
-		let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn')),
-				redditBtn = document.querySelector('.embedd-container .reddit-btn'),
-				hnBtn = document.querySelector('.embedd-container .hn-btn'),
-				viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore')),
-				moreBtn = document.querySelector('.embedd-container .more-btn');
+		let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn'));
+		let redditBtn = document.querySelector('.embedd-container .reddit-btn');
+		let hnBtn = document.querySelector('.embedd-container .hn-btn');
+		let viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore'));
+		let moreBtn = document.querySelector('.embedd-container .more-btn');
 
 		hideButtons.forEach(x => {
 			x.addEventListener('click', hideChildren, false);
@@ -110,7 +110,7 @@ function contextConstructor() {
 			window.addEventListener('scroll', loadOnScroll, false);
 		}
 		
-	};
+	}
 
 	function loadOnScroll() {
 		let maxScroll =  document.body.scrollHeight - window.innerHeight;
@@ -118,7 +118,7 @@ function contextConstructor() {
 			window.removeEventListener('scroll', loadOnScroll, false);
 			renderMore(context);
 		}
-	};
+	}
 
 	function renderHtml(data) {
 		data.redditActive = () => {
@@ -141,11 +141,11 @@ function contextConstructor() {
 
 		context.config.element.innerHTML = html;
 		initListeners();
-	};
+	}
 
 	function renderMore({ data, config, redditActive }) {
-		let template = '{{#comments}}{{> comment}}{{/comments}}',
-				element = document.querySelector('.embedd-container .comments');
+		let template = '{{#comments}}{{> comment}}{{/comments}}';
+		let element = document.querySelector('.embedd-container .comments');
 		
 		data.comments = data.next.slice(0, config.limit);
 		data.next = data.next.slice(config.limit);
@@ -171,19 +171,19 @@ function contextConstructor() {
 		}
 		
 		initListeners();
-	};
+	}
 
 	function hideChildren(e) {
-		let el = e.target,
-				parentComment = el.parentNode.parentNode.parentNode;
+		let el = e.target;
+		let parentComment = el.parentNode.parentNode.parentNode;
 		
 		parentComment.classList.toggle('closed');
-	};
+	}
 
 	function showMoreComments(e) {
-		let el = e.currentTarget,
-				parent = el.parentElement,
-				comments = parent.querySelector('.children');
+		let el = e.currentTarget;
+		let parent = el.parentElement;
+		let comments = parent.querySelector('.children');
 
 		function showComment(c, count) {
 
@@ -202,7 +202,7 @@ function contextConstructor() {
 		};
 
 		showComment(comments.firstChild, 0);
-	};
+	}
 
 	function getDisplayVal(el) {
 		if (el.currentStyle) {
@@ -211,48 +211,24 @@ function contextConstructor() {
 		else {
 			return window.getComputedStyle(el, null).getPropertyValue("display");
 		}
-	};
-
-	function genData() {
-		let services = () => {
-			let serviceArray = [],
-					{reddit, hn} = context.clients,
-					service = context.clients[context.config.service];
-
-			if(reddit) {
-				serviceArray.push(reddit.hasComments());
-			}
-
-			if(hn) {
-				serviceArray.push(hn.hasComments());
-			}
-
-			serviceArray.push(service.getComments());
-			
-			return serviceArray;
-		};
-		
-		let arr = services();
-		
-		return Promise.all(arr);
-	};
+	}
 
 	context.init = () => {
-		genData()
-			.then(data => {
-				context.hasReddit = data[0];
-				if(data.length === 3) {
-					context.hasHn = data[1];
-				}
-				context.data = data[data.length - 1];
-				renderHtml(context);
-			}, err => {
-				throw new Error(err);
-			});
+		let {reddit, hn} = context.clients;
+		let service = context.clients[context.config.service];
+
+		async.series({
+			hasHn: hn.hasComments,
+			hasReddit: reddit.hasComments,
+			data: service.getComments
+		}, (err, result) => {
+			context = extend(context, result);
+			renderHtml(context);
+		});
 	};
 
 	return context;
-};
+}
 
 const context = contextConstructor();
 context.init();

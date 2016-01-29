@@ -10,7 +10,7 @@
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "babel-polyfill": "6.3.14",
+    "async": "1.5.2",
     "mustache": "2.2.1"
   },
   "devDependencies": {
