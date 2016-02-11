@@ -10,6 +10,22 @@ const spec = {
 	limit: 5
 };
 
+const embeddSpec = {
+	submitUrl: 'test',
+	dataFmt: function(){},
+	commentFmt: function(){},
+	threadFmt: function(){}
+};
+
+function extend(o1, o2) {
+	let result={};
+	
+	for(let key in o1) result[key]=o1[key];
+	for(let key in o2) result[key]=o2[key];
+	
+	return result;
+}
+
 function isBoolean(x) {
 	return typeof x === 'boolean';
 }
@@ -124,20 +140,32 @@ describe('embeddConstructor', () => {
 
 	it('should throw an error if the spec object doesnt have a dataFmt method', () => {
 		function embeddTest() {
-			let embeddSpec = {};
+			let testSpec = extend({}, embeddSpec);
+			delete testSpec.dataFmt;
 			
-			return embeddConstructor(embeddSpec);
+			return embeddConstructor(testSpec);
 		}
 
 		expect(embeddTest).to.throw('dataFmt method isnt defined');
 	});
 
+	it('should throw an error if the spec object doesnt have a submitUrl property', () => {
+		function embeddTest() {
+			let testSpec = extend({}, embeddSpec);
+			delete testSpec.submitUrl;
+			
+			return embeddConstructor(testSpec);
+		}
+
+		expect(embeddTest).to.throw('submitUrl isnt defined');
+	});
+	
 	it('should throw an error if the spec object doesnt have a commentFmt method', () => {
 		function embeddTest() {
-			let embeddSpec = {};
-			embeddSpec.dataFmt = function() {};
+			let testSpec = extend({}, embeddSpec);
+			delete testSpec.commentFmt;
 			
-			return embeddConstructor(embeddSpec);
+			return embeddConstructor(testSpec);
 		};
 		
 		expect(embeddTest).to.throw('commentFmt method isnt defined');
@@ -145,10 +173,10 @@ describe('embeddConstructor', () => {
 
 	it('should throw an error if the spec object doesnt have a threadFmt method', () => {
 		function embeddTest() {
-			let embeddSpec = {};
-			embeddSpec.dataFmt = () => {};
-			embeddSpec.commentFmt = () => {};
-			return embeddConstructor(embeddSpec);
+			let testSpec = extend({}, embeddSpec);
+			delete testSpec.threadFmt;
+			
+			return embeddConstructor(testSpec);
 		};
 
 		expect(embeddTest).to.throw('threadFmt method isnt defined');

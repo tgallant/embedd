@@ -9,6 +9,7 @@ export function redditConstructor(spec) {
 	embeddSpec.base = 'https://www.reddit.com';
 	embeddSpec.searchQs = '/search.json?q=url:';
 	embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
+	embeddSpec.submitUrl = 'https://www.reddit.com/submit';
 	embeddSpec.limit = limit;
 
 	embeddSpec.dataFmt = ({response}, cb) => {

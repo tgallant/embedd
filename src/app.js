@@ -65,8 +65,12 @@ function contextConstructor() {
 	function extend(o1, o2) {
 		let result={};
 		
-		for(let key in o1) result[key]=o1[key];
-		for(let key in o2) result[key]=o2[key];
+		for(let key in o1) {
+				result[key] = o1[key];
+		}
+		for(let key in o2) {
+				result[key] = o2[key];
+		}
 		
 		return result;
 	}
@@ -120,7 +124,10 @@ function contextConstructor() {
 		}
 	}
 
-	function renderHtml(data) {
+	function renderHtml(obj) {
+		let data = extend({}, obj);
+		data.config = extend({}, obj.config);
+		
 		data.redditActive = () => {
 			return context.config.service === 'reddit';
 		};
@@ -229,6 +236,7 @@ function contextConstructor() {
 		data.data = service.getComments;
 		
 		async.series(data, (err, result) => {
+			result.submitUrl = service.submitUrl;
 			context = extend(context, result);
 			renderHtml(context);
 		});

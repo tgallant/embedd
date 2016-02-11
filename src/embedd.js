@@ -38,6 +38,7 @@ export function parseDate(unix) {
 
 export function embeddConstructor(spec) {
 	if(!spec) { throw new Error('No spec object has been specified'); }
+	if(!spec.submitUrl) { throw new Error('submitUrl isnt defined'); }
 	if(!spec.dataFmt) { throw new Error('dataFmt method isnt defined'); }
 	if(!spec.commentFmt) { throw new Error('commentFmt method isnt defined'); }
 	if(!spec.threadFmt) { throw new Error('threadFmt method isnt defined'); }
@@ -174,6 +175,8 @@ export function embeddConstructor(spec) {
 		
 		cb(null, merged);
 	}
+
+	embedd.submitUrl = spec.submitUrl;
 
 	embedd.hasComments = (cb) => {
 		async.waterfall([

@@ -8,6 +8,7 @@ export function hnConstructor(spec) {
 	let embeddSpec = {};
 
 	embeddSpec.query = searchBase + url;
+	embeddSpec.submitUrl = 'https://news.ycombinator.com/submit';
 	embeddSpec.base = 'https://hn.algolia.com/api/v1/items/';
 	embeddSpec.limit = limit;
 
