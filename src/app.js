@@ -10,208 +10,208 @@ const mainTemplate = require('./templates/main.html');
 const commentTemplate = require('./templates/comment.html');
 
 function contextConstructor() {
-	let context = {};
-	let script = document.currentScript;
-	let parent = script.parentNode;
-	let container = document.createElement('div');
-	
-	context.config = {
-		element: container,
-		url: location.protocol + '//' + location.host + location.pathname,
-		dark: false,
-		service: 'reddit',
-		both: true,
-		loadMore: true,
-		infiniteScroll: false,
-		limit: 5,
-		debug: false
-	};
-	
-	let userConfig = script.innerHTML.length > 0
-				? JSON.parse(script.innerHTML.trim())
-				: {};
-	
-	context.config = extend(context.config, userConfig);
+  let context = {};
+  let script = document.currentScript;
+  let parent = script.parentNode;
+  let container = document.createElement('div');
 
-	if(typeof context.config.element === 'string') {
-		context.config.element = document.querySelector(context.config.element);
-	}
-	
-	context.config.element.className = 'embedd-container';
-	
-	if(context.config.element === container) {
-		parent.insertBefore(container, script);
-	}
+  context.config = {
+    element: container,
+    url: location.protocol + '//' + location.host + location.pathname,
+    dark: false,
+    service: 'reddit',
+    both: true,
+    loadMore: true,
+    infiniteScroll: false,
+    limit: 5,
+    debug: false
+  };
 
-	if(context.config.loadMore && context.config.infiniteScroll) {
-		context.config.loadMore = false;
-	}
+  let userConfig = script.innerHTML.length > 0
+        ? JSON.parse(script.innerHTML.trim())
+        : {};
 
-	context.clients = {};
+  context.config = extend(context.config, userConfig);
 
-	if(context.config.both) {
-		context.clients.reddit = redditConstructor(context.config);
-		context.clients.hn = hnConstructor(context.config);
-	}
+  if(typeof context.config.element === 'string') {
+    context.config.element = document.querySelector(context.config.element);
+  }
 
-	if(!context.config.both && context.config.service === 'reddit') {
-		context.clients.reddit = redditConstructor(context.config);
-	}
+  context.config.element.className = 'embedd-container';
 
-	if(!context.config.both && context.config.service === 'hn') {
-		context.clients.hn = hnConstructor(context.config);
-	}
+  if(context.config.element === container) {
+    parent.insertBefore(container, script);
+  }
 
-	function extend(o1, o2) {
-		let result={};
-		
-		for(let key in o1) {
-				result[key] = o1[key];
-		}
-		for(let key in o2) {
-				result[key] = o2[key];
-		}
-		
-		return result;
-	}
+  if(context.config.loadMore && context.config.infiniteScroll) {
+    context.config.loadMore = false;
+  }
 
-	function initListeners() {
-		let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn'));
-		let redditBtn = document.querySelector('.embedd-container .reddit-btn');
-		let hnBtn = document.querySelector('.embedd-container .hn-btn');
-		let viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore'));
-		let moreBtn = document.querySelector('.embedd-container .more-btn');
+  context.clients = {};
 
-		hideButtons.forEach(x => {
-			x.addEventListener('click', hideChildren, false);
-		});
+  if(context.config.both) {
+    context.clients.reddit = redditConstructor(context.config);
+    context.clients.hn = hnConstructor(context.config);
+  }
 
-		viewMoreBtns.forEach(x => {
-			x.addEventListener('click', showMoreComments, false);
-		});
+  if(!context.config.both && context.config.service === 'reddit') {
+    context.clients.reddit = redditConstructor(context.config);
+  }
 
-		if(redditBtn) {
-			redditBtn.addEventListener('click', () => {
-				context.config.service = 'reddit';
-				context.init();
-			}, false);
-		}
-		
-		if(hnBtn) {
-			hnBtn.addEventListener('click', () => {
-				context.config.service = 'hn';
-				context.init();
-			}, false);
-		}
+  if(!context.config.both && context.config.service === 'hn') {
+    context.clients.hn = hnConstructor(context.config);
+  }
 
-		if(moreBtn) {
-			moreBtn.addEventListener('click', () => {
-				renderMore(context);
-			}, false);
-		}
+  function extend(o1, o2) {
+    let result={};
 
-		if(!context.config.loadMore && context.config.infiniteScroll) {
-			window.addEventListener('scroll', loadOnScroll, false);
-		}
-		
-	}
+    for(let key in o1) {
+      result[key] = o1[key];
+    }
+    for(let key in o2) {
+      result[key] = o2[key];
+    }
 
-	function loadOnScroll() {
-		let maxScroll =  document.body.scrollHeight - window.innerHeight;
-		if(maxScroll - window.scrollY < 20) {
-			window.removeEventListener('scroll', loadOnScroll, false);
-			renderMore(context);
-		}
-	}
+    return result;
+  }
 
-	function renderHtml(obj) {
-		let data = extend({}, obj);
-		data.config = extend({}, obj.config);
-		
-		data.redditActive = () => {
-			return context.config.service === 'reddit';
-		};
+  function initListeners() {
+    let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn'));
+    let redditBtn = document.querySelector('.embedd-container .reddit-btn');
+    let hnBtn = document.querySelector('.embedd-container .hn-btn');
+    let viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore'));
+    let moreBtn = document.querySelector('.embedd-container .more-btn');
 
-		data.hnActive = () => {
-			return context.config.service === 'hn';
-		};
+    hideButtons.forEach(x => {
+      x.addEventListener('click', hideChildren, false);
+    });
 
-		if(data.data.next.length === 0) {
-			data.config.loadMore = false;
-		}
-		
-		let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
+    viewMoreBtns.forEach(x => {
+      x.addEventListener('click', showMoreComments, false);
+    });
 
-		if(context.config.debug) {
-			console.log(data);
-		}
+    if(redditBtn) {
+      redditBtn.addEventListener('click', () => {
+        context.config.service = 'reddit';
+        context.init();
+      }, false);
+    }
 
-		context.config.element.innerHTML = html;
-		initListeners();
-	}
+    if(hnBtn) {
+      hnBtn.addEventListener('click', () => {
+        context.config.service = 'hn';
+        context.init();
+      }, false);
+    }
 
-	function renderMore({ data, config, redditActive }) {
-		let template = '{{#comments}}{{> comment}}{{/comments}}';
-		let element = document.querySelector('.embedd-container .comments');
-		
-		data.comments = data.next.slice(0, config.limit);
-		data.next = data.next.slice(config.limit);
-		data.config = config;
-		data.hasMore = !!data.next.length;
+    if(moreBtn) {
+      moreBtn.addEventListener('click', () => {
+        renderMore(context);
+      }, false);
+    }
 
-		if(redditActive) {
-			data.redditActive = redditActive;
-		}
+    if(!context.config.loadMore && context.config.infiniteScroll) {
+      window.addEventListener('scroll', loadOnScroll, false);
+    }
 
-		let html = mustache.render(template, data, { comment : commentTemplate });
-		element.insertAdjacentHTML('beforeend', html);
+  }
 
-		if(!data.hasMore) {
-			let moreBtn = document.querySelector('.embedd-container .more-btn');
+  function loadOnScroll() {
+    let maxScroll =  document.body.scrollHeight - window.innerHeight;
+    if(maxScroll - window.scrollY < 20) {
+      window.removeEventListener('scroll', loadOnScroll, false);
+      renderMore(context);
+    }
+  }
 
-			if(moreBtn) {
-				moreBtn.style.display = 'none';
-			}
-			else {
-				window.removeEventListener('scroll', loadOnScroll, false);
-			}
-		}
-		
-		initListeners();
-	}
+  function renderHtml(obj) {
+    let data = extend({}, obj);
+    data.config = extend({}, obj.config);
 
-	function hideChildren(e) {
-		let el = e.target;
-		let parentComment = el.parentNode.parentNode.parentNode;
-		
-		parentComment.classList.toggle('closed');
-	}
+    data.redditActive = () => {
+      return context.config.service === 'reddit';
+    };
 
-	function showMoreComments(e) {
-		let el = e.currentTarget;
-		let parent = el.parentElement;
-		let comments = parent.querySelector('.children');
+    data.hnActive = () => {
+      return context.config.service === 'hn';
+    };
 
-		function showComment(c, count) {
+    if(data.data.next.length === 0) {
+      data.config.loadMore = false;
+    }
 
-			if(c && count !== 3) {
-				if(c instanceof Text || getDisplayVal(c) === 'block') {
-					showComment(c.nextSibling, count);
-				}
-				else {
-					c.style.display = 'block';
-					showComment(c.nextSibling, count + 1);
-				}
-			}
-			else {
-				parent.querySelector('.viewMore').style.display = 'none';
-			}
-		};
+    let html = mustache.render(mainTemplate, data, { comment : commentTemplate });
 
-		showComment(comments.firstChild, 0);
-	}
+    if(context.config.debug) {
+      console.log(data);
+    }
 
-	function getDisplayVal(el) {
+    context.config.element.innerHTML = html;
+    initListeners();
+  }
+
+  function renderMore({ data, config, redditActive }) {
+    let template = '{{#comments}}{{> comment}}{{/comments}}';
+    let element = document.querySelector('.embedd-container .comments');
+
+    data.comments = data.next.slice(0, config.limit);
+    data.next = data.next.slice(config.limit);
+    data.config = config;
+    data.hasMore = !!data.next.length;
+
+    if(redditActive) {
+      data.redditActive = redditActive;
+    }
+
+    let html = mustache.render(template, data, { comment : commentTemplate });
+    element.insertAdjacentHTML('beforeend', html);
+
+    if(!data.hasMore) {
+      let moreBtn = document.querySelector('.embedd-container .more-btn');
+
+      if(moreBtn) {
+        moreBtn.style.display = 'none';
+      }
+      else {
+        window.removeEventListener('scroll', loadOnScroll, false);
+      }
+    }
+
+    initListeners();
+  }
+
+  function hideChildren(e) {
+    let el = e.target;
+    let parentComment = el.parentNode.parentNode.parentNode;
+
+    parentComment.classList.toggle('closed');
+  }
+
+  function showMoreComments(e) {
+    let el = e.currentTarget;
+    let parent = el.parentElement;
+    let comments = parent.querySelector('.children');
+
+    function showComment(c, count) {
+
+      if(c && count !== 3) {
+        if(c instanceof Text || getDisplayVal(c) === 'block') {
+          showComment(c.nextSibling, count);
+        }
+        else {
+          c.style.display = 'block';
+          showComment(c.nextSibling, count + 1);
+        }
+      }
+      else {
+        parent.querySelector('.viewMore').style.display = 'none';
+      }
+    };
+
+    showComment(comments.firstChild, 0);
+  }
+
+  function getDisplayVal(el) {
 		if (el.currentStyle) {
 			return el.currentStyle.display;
 		}
@@ -234,7 +234,7 @@ function contextConstructor() {
 		}
 
 		data.data = service.getComments;
-		
+
 		async.series(data, (err, result) => {
 			result.submitUrl = service.submitUrl;
 			context = extend(context, result);

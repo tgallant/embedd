@@ -1,45 +1,45 @@
 <article class="{{#isEven}}evenDepth{{/isEven}} {{#lowScore}}closed{{/lowScore}}">
-	
-	<aside>
-		<span>
-			<a class="hideChildrenBtn" href="javascript:void(0)"></a>
-		</span>
-		
-		<span>
-			<a href="{{author_link}}" target="_blank">{{author}}</a>
-		</span>
-		{{#redditActive}}
-		{{#score}}<span><b>{{score}} points</b></span>{{/score}}
-		{{/redditActive}}
-		
-		{{#permalink}}<span><a href="{{permalink}}">{{subreddit}}</a></span>{{/permalink}}
 
-		{{#created}}<span>{{created}}</span>{{/created}}
-	</aside>
+  <aside>
+    <span>
+      <a class="hideChildrenBtn" href="javascript:void(0)"></a>
+    </span>
 
-	{{#body_html}}
-	{{& body_html}}
-	{{/body_html}}
+    <span>
+      <a href="{{author_link}}" target="_blank">{{author}}</a>
+    </span>
+    {{#redditActive}}
+    {{#score}}<span><b>{{score}} points</b></span>{{/score}}
+    {{/redditActive}}
 
-	<aside class="links">
-		<span>
-			<a href="{{thread}}" target="_blank">view on {{config.service}}</a>
-		</span>
-	</aside>
+    {{#permalink}}<span><a href="{{permalink}}">{{subreddit}}</a></span>{{/permalink}}
 
-	{{#hasReplies}}
-	<div class="children">
-		{{#replies}}
-		{{> comment}}
-		{{/replies}}
-	</div>
+    {{#created}}<span>{{created}}</span>{{/created}}
+  </aside>
 
-	{{#loadMore}}
-	<div class="viewMore">
-		<a href="javascript:void(0)">view more comments</a>
-	</div>
-	{{/loadMore}}
-	
-	{{/hasReplies}}
+  {{#body_html}}
+  {{& body_html}}
+  {{/body_html}}
+
+  <aside class="links">
+    <span>
+      <a href="{{thread}}" target="_blank">view on {{config.service}}</a>
+    </span>
+  </aside>
+
+  {{#hasReplies}}
+  <div class="children">
+    {{#replies}}
+    {{> comment}}
+    {{/replies}}
+  </div>
+
+  {{#loadMore}}
+  <div class="viewMore">
+    <a href="javascript:void(0)">view more comments</a>
+  </div>
+  {{/loadMore}}
+
+  {{/hasReplies}}
 
 </article>

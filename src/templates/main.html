@@ -2,47 +2,47 @@
   {{#data}}
   <div class="info">
     {{#score}}
-		<h3>{{score}} upvotes {{#multiple}}over {{threads}} threads{{/multiple}} on {{config.service}}</h3>
-		{{/score}}
-		{{^score}}
-		<a target="_blank" href="{{submitUrl}}" class="no-comments">
-			<h3>Submit to {{config.service}}</h3>
-		</a>
-		{{/score}}
+    <h3>{{score}} upvotes {{#multiple}}over {{threads}} threads{{/multiple}} on {{config.service}}</h3>
+    {{/score}}
+    {{^score}}
+    <a target="_blank" href="{{submitUrl}}" class="no-comments">
+      <h3>Submit to {{config.service}}</h3>
+    </a>
+    {{/score}}
     <h5>
       Powered by <a target="_blank" href="https://embedd.io">embedd.io</a>
     </h5>
   </div>
 
-	{{#config.both}}
-	{{#hasReddit}}
-	{{#hasHn}}
-	<div class="buttons">
-		<button class="reddit-btn button{{#redditActive}} active{{/redditActive}}">
-			<img src="//i.imgur.com/I3JS7Ew.gif"/>
-			Reddit
-		</button>
+  {{#config.both}}
+  {{#hasReddit}}
+  {{#hasHn}}
+  <div class="buttons">
+    <button class="reddit-btn button{{#redditActive}} active{{/redditActive}}">
+      <img src="//i.imgur.com/I3JS7Ew.gif"/>
+      Reddit
+    </button>
 
-		<button class="hn-btn button{{#hnActive}} active{{/hnActive}}">
-			<img src="//i.imgur.com/ByLiuCS.gif" />
-			HN
-		</button>
-	</div>
-	{{/hasHn}}
-	{{/hasReddit}}
-	{{/config.both}}
+    <button class="hn-btn button{{#hnActive}} active{{/hnActive}}">
+      <img src="//i.imgur.com/ByLiuCS.gif" />
+      HN
+    </button>
+  </div>
+  {{/hasHn}}
+  {{/hasReddit}}
+  {{/config.both}}
 
-	<div class="comments">
+  <div class="comments">
     {{#comments}}
     {{> comment}}
-	  {{/comments}}
-	</div>
+    {{/comments}}
+  </div>
 
-	{{#config.loadMore}}
-	<div class="more-btn-container">
-		<button class="button more-btn">Load More</button>
-	</div>
-	{{/config.loadMore}}
-  
+  {{#config.loadMore}}
+  <div class="more-btn-container">
+    <button class="button more-btn">Load More</button>
+  </div>
+  {{/config.loadMore}}
+
   {{/data}}
 </section>
