@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-BUCKET=embedd.io
-DIR=_dist/
-aws s3 sync $DIR s3://$BUCKET/
+LOCATION=embedd.io/embedd.min.js
+FILE=dist/embedd.min.js
+aws s3 cp $FILE s3://$LOCATION
