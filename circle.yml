@@ -3,8 +3,8 @@ machine:
     version: 6.3.1
 
 deployment:
-    aws:
+    production:
     branch: master
-        commands:
+    commands:
         - npm run build
         - /bin/bash publish.sh
