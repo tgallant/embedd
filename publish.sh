@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-LOCATION=embedd.io/embedd.min.js
+LOCATION=embedd.io.s3.amazonaws.com/embedd.min.js
 FILE=dist/embedd.min.js
 aws s3 cp $FILE s3://$LOCATION
