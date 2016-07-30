@@ -2,6 +2,8 @@
 
 [![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
+[![CircleCI](https://circleci.com/gh/tgallant/embedd.svg?style=svg)](https://circleci.com/gh/tgallant/embedd)
+
 Embedd allows you to display reddit and/or HackerNews comments on your
 website. The intended use case is for blogs and product pages,
 although it is configurable enough for other cases.
