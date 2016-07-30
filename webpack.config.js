@@ -1,8 +1,9 @@
 /*global require, module, __dirname*/
 
-var path = require('path'),
-		bourbon = require('node-bourbon'),
-		neat = require('node-neat');
+'use strict'
+
+const bourbon = require('node-bourbon')
+const neat = require('node-neat')
 
 module.exports = {
   entry: './src/app.js',
@@ -12,12 +13,12 @@ module.exports = {
   },
   module: {
     loaders: [
-			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel?presets[]=es2015'},
-      { test: /\.scss$/, loaders: ['style', 'css', 'sass'] },
-			{ test: /\.html$/, loader: 'html-loader?minimize=false' }
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?presets[]=es2015' },
+      { test: /\.scss$/, loaders: [ 'style', 'css', 'sass' ] },
+      { test: /\.html$/, loader: 'html-loader?minimize=false' }
     ]
   },
-	sassLoader: {
-		includePaths: bourbon.with(neat.includePaths)
-	}
-};
+  sassLoader: {
+    includePaths: bourbon.with(neat.includePaths)
+  }
+}

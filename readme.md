@@ -1,5 +1,7 @@
 # Embedd
 
+[![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 Embedd allows you to display reddit and/or HackerNews comments on your
 website. The intended use case is for blogs and product pages,
 although it is configurable enough for other cases.
@@ -110,13 +112,16 @@ dependencies.
 To start up a local server run
 
 ```
-npm run watch
+npm start
 ```
 
 Then browse to http://localhost:8080/webpack-dev-server/
 
-The mocha tests will run automatically and the results will display in
-the browser.
+To run the tests, do
+
+```
+npm test
+```
 
 ## Build
 

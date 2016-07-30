@@ -1,33 +1,37 @@
 {
   "name": "embeddit",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Embed reddit comments about your page on your page!",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "watch": "webpack-dev-server 'mocha!./tests/tests.js' --output-filename testBundle.js --content-base tests/",
+    "pretest": "snazzy",
+    "test": "babel-node --presets es2015 tests/*.js | faucet",
+    "start": "webpack-dev-server --output-filename testBundle.js --content-base tests/",
     "build": "webpack --progress --colors --optimize-minimize --output-filename embedd.min.js"
   },
   "author": "Tim Gallant",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "async": "1.5.2",
+    "async": "2.0.1",
+    "axios": "^0.13.1",
     "mustache": "2.2.1"
   },
   "devDependencies": {
-    "babel-core": "6.4.0",
-    "babel-loader": "6.2.1",
-    "babel-preset-es2015": "6.3.13",
-    "chai": "3.4.1",
+    "babel-cli": "^6.11.4",
+    "babel-core": "6.11.4",
+    "babel-loader": "6.2.4",
+    "babel-preset-es2015": "6.9.0",
     "css-loader": "0.23.1",
-    "html-loader": "0.4.0",
-    "mocha": "2.3.4",
-    "mocha-loader": "0.7.1",
-    "node-sass": "3.4.2",
-    "node-bourbon": "4.2.3",
+    "faucet": "0.0.1",
+    "html-loader": "0.4.3",
+    "node-bourbon": "4.2.8",
     "node-neat": "1.7.2",
-    "sass-loader": "3.1.2",
-    "style-loader": "0.13.0",
-    "webpack": "1.12.11",
+    "node-sass": "3.8.0",
+    "sass-loader": "4.0.0",
+    "snazzy": "^4.0.0",
+    "style-loader": "0.13.1",
+    "tape": "^4.6.0",
+    "webpack": "1.13.1",
     "webpack-dev-server": "1.14.1"
   }
 }

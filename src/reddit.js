@@ -1,24 +1,24 @@
-import {decode, parseDate, embeddConstructor} from './embedd';
+import {decode, parseDate, embeddConstructor} from './embedd'
 
-export function redditConstructor(spec) {
-  if(!spec) throw new Error('The Reddit constructor requires a spec object');
+export default function redditConstructor (spec) {
+  if (!spec) { throw new Error('The Reddit constructor requires a spec object') }
 
-  let {url, limit} = spec;
-  let embeddSpec = {};
+  let {url, limit} = spec
+  let embeddSpec = {}
 
-  embeddSpec.base = 'https://www.reddit.com';
-  embeddSpec.searchQs = '/search.json?q=url:';
-  embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url;
-  embeddSpec.submitUrl = 'https://www.reddit.com/submit';
-  embeddSpec.limit = limit;
+  embeddSpec.base = 'https://www.reddit.com'
+  embeddSpec.searchQs = '/search.json?q=url:'
+  embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url
+  embeddSpec.submitUrl = 'https://www.reddit.com/submit'
+  embeddSpec.limit = limit
 
-  embeddSpec.dataFmt = ({response}, cb) => {
-    response.hits = response.data.children.map(function(x) {
-      x = x.data;
-      return x;
-    });
-    cb(null, response);
-  };
+  embeddSpec.dataFmt = (response, cb) => {
+    response.hits = response.data.children.map(x => {
+      x = x.data
+      return x
+    })
+    cb(null, response)
+  }
 
   embeddSpec.commentFmt = (comment) => {
     return {
@@ -30,34 +30,34 @@ export function redditConstructor(spec) {
       score: comment.score,
       replies: null,
       hasReplies: false,
-      isEven: function() { return this.depth % 2 === 0; },
-      lowScore: function() { return this.score < 0; }
-    };
-  };
+      isEven: function () { return this.depth % 2 === 0 },
+      lowScore: function () { return this.score < 0 }
+    }
+  }
 
   embeddSpec.threadFmt = (thread) => {
     let childrenFmt = (child) => {
-      child.points = child.score;
-      if(child.replies) {
+      child.points = child.score
+      if (child.replies) {
         child.children = child.replies.data.children.map(x => {
-          x = x.data;
-          if(x.replies) {
-            x.children = childrenFmt(x);
+          x = x.data
+          if (x.replies) {
+            x.children = childrenFmt(x)
           }
-          return x;
-        });
+          return x
+        })
       }
-      return child;
-    };
+      return child
+    }
 
-    let op = thread[0].data.children[0].data;
-    op.points = op.score;
+    let op = thread[0].data.children[0].data
+    op.points = op.score
     op.children = thread[1].data.children.map(x => {
-      x = x.data;
-      return childrenFmt(x);
-    });
-    return op;
-  };
+      x = x.data
+      return childrenFmt(x)
+    })
+    return op
+  }
 
-  return embeddConstructor(embeddSpec);
+  return embeddConstructor(embeddSpec)
 }
