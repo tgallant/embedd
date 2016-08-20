@@ -7,7 +7,7 @@ export default function hnConstructor (spec) {
   let {url, limit} = spec
   let embeddSpec = {}
 
-  embeddSpec.query = searchBase + url
+  embeddSpec.query = searchBase + encodeURIComponent(url)
   embeddSpec.submitUrl = 'https://news.ycombinator.com/submit'
   embeddSpec.base = 'https://hn.algolia.com/api/v1/items/'
   embeddSpec.limit = limit
