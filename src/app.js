@@ -1,4 +1,4 @@
-/*global require, location,Text*/
+/* global require, location,Text */
 
 import './scss/app.scss'
 import async from 'async'
