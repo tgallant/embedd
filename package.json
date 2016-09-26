@@ -1,5 +1,5 @@
 {
-  "name": "embeddit",
+  "name": "embedd",
   "version": "1.0.1",
   "description": "Embed reddit comments about your page on your page!",
   "main": "src/app.js",
