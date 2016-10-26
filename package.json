@@ -31,7 +31,7 @@
     "snazzy": "^5.0.0",
     "style-loader": "0.13.1",
     "tape": "^4.6.0",
-    "webpack": "1.13.2",
+    "webpack": "1.13.3",
     "webpack-dev-server": "1.16.2"
   }
 }
