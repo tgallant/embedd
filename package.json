@@ -14,7 +14,7 @@
   "dependencies": {
     "async": "2.1.2",
     "axios": "^0.15.0",
-    "mustache": "2.2.1"
+    "mustache": "2.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
