@@ -28,7 +28,7 @@
     "node-neat": "1.7.2",
     "node-sass": "4.1.1",
     "sass-loader": "4.1.1",
-    "snazzy": "^5.0.0",
+    "snazzy": "^6.0.0",
     "style-loader": "0.13.1",
     "tape": "^4.6.0",
     "webpack": "1.14.0",
