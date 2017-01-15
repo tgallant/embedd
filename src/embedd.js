@@ -4,21 +4,21 @@ import axios from 'axios'
 export function decode (html) {
   if (!html) { return false }
 
-  let txt = document.createElement('textarea')
+  const txt = document.createElement('textarea')
   txt.innerHTML = html
 
   return txt.value
 }
 
 export function parseDate (unix) {
-  let now = new Date().getTime() / 1000
+  const now = new Date().getTime() / 1000
 
   if (!unix || unix > now) return false
 
-  let seconds = now - unix
-  let minutes = Math.floor(seconds / 60)
-  let hours = Math.floor(minutes / 60)
-  let days = Math.floor(hours / 24)
+  const seconds = now - unix
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
 
   if (days === 1) { return '1 day ago' }
   if (days > 0) { return days + ' days ago' }
@@ -38,20 +38,21 @@ export function embeddConstructor (spec) {
   if (!spec.threadFmt) { throw new Error('threadFmt method isnt defined') }
   if (spec.limit === 0) { spec.limit = null }
 
-  let embedd = {}
-  let cache = {}
+  const embedd = {}
+  const cache = {}
 
   function get (url, cb) {
     if (!url) { throw new Error('No URL has been specified') }
 
     if (cache[url]) {
       cb(null, cache[url])
-    } else {
-      axios.get(url).then(res => {
-        cache[url] = res.data
-        cb(null, res.data)
-      }).catch(cb)
+      return
     }
+
+    axios.get(url).then(res => {
+      cache[url] = res.data
+      cb(null, res.data)
+    }).catch(cb)
   }
 
   function threadUrl ({ sub, id }) {
@@ -67,21 +68,22 @@ export function embeddConstructor (spec) {
   }
 
   function getThreads (data, cb) {
-    let activeThreads = data.hits.filter(x => {
+    const activeThreads = data.hits.filter(x => {
       return !!x.num_comments
     })
 
     async.map(activeThreads.slice(0, 10), ({id, subreddit}, callback) => {
-      let url = threadUrl({ sub: subreddit, id: id })
-
       if (id === 'undefined') { throw new Error('No ID specified') }
+
+      const url = threadUrl({ sub: subreddit, id: id })
+
       get(url, callback)
     }, cb)
   }
 
   function commentConstructor ({ comment, op, depth }) {
-    let cdepth = depth || 0
-    let c = spec.commentFmt(comment)
+    const cdepth = depth || 0
+    const c = spec.commentFmt(comment)
 
     c.depth = cdepth
     c.subreddit = op.subreddit
@@ -92,7 +94,7 @@ export function embeddConstructor (spec) {
     }
 
     if (comment.children && comment.children.length > 0) {
-      let nxtDepth = cdepth + 1
+      const nxtDepth = cdepth + 1
 
       c.hasReplies = true
       c.replies = comment.children.reduce((arr, r) => {
@@ -110,9 +112,9 @@ export function embeddConstructor (spec) {
   }
 
   function parseComments (threads, cb) {
-    var cs = threads.map(x => {
-      var op = spec.threadFmt(x)
-      var comments = op.children.reduce((arr, c) => {
+    const cs = threads.map(x => {
+      const op = spec.threadFmt(x)
+      const comments = op.children.reduce((arr, c) => {
         if (c.author) {
           arr.push(commentConstructor({ comment: c, op: op }))
         }
@@ -125,7 +127,7 @@ export function embeddConstructor (spec) {
   }
 
   function mergeComments (comments, cb) {
-    let merge = (score, arr, index) => {
+    const merge = (score, arr, index) => {
       if (index > comments.length - 1) {
         return {
           score: score,
@@ -134,19 +136,19 @@ export function embeddConstructor (spec) {
           multiple: function () { return this.threads > 1 }
         }
       }
-      let data = comments[index]
-      let newScore = score += data.op.points
-      let newComments = arr.concat(data.comments)
+      const data = comments[index]
+      const newScore = score += data.op.points
+      const newComments = arr.concat(data.comments)
 
       return merge(newScore, newComments, index + 1)
     }
 
-    let merged = merge(0, [], 0)
-    let sorted = merged.comments.sort((a, b) => {
+    const merged = merge(0, [], 0)
+    const sorted = merged.comments.sort((a, b) => {
       return b.score - a.score
     })
 
-    let limit = spec.limit || sorted.length
+    const limit = spec.limit || sorted.length
 
     merged.comments = sorted.slice(0, limit)
     merged.next = sorted.slice(limit)
@@ -164,7 +166,7 @@ export function embeddConstructor (spec) {
     ], (err, data) => {
       if (err) { throw new Error(err) }
 
-      let threads = data.hits.filter(x => {
+      const threads = data.hits.filter(x => {
         return !!x.num_comments
       })
 

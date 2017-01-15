@@ -3,8 +3,8 @@ import {decode, parseDate, embeddConstructor} from './embedd'
 export default function redditConstructor (spec) {
   if (!spec) { throw new Error('The Reddit constructor requires a spec object') }
 
-  let {url, limit} = spec
-  let embeddSpec = {}
+  const {url, limit} = spec
+  const embeddSpec = {}
 
   embeddSpec.base = 'https://www.reddit.com'
   embeddSpec.searchQs = '/search.json?q=url:'
@@ -36,7 +36,7 @@ export default function redditConstructor (spec) {
   }
 
   embeddSpec.threadFmt = (thread) => {
-    let childrenFmt = (child) => {
+    const childrenFmt = (child) => {
       child.points = child.score
       if (child.replies) {
         child.children = child.replies.data.children.map(x => {
@@ -50,7 +50,7 @@ export default function redditConstructor (spec) {
       return child
     }
 
-    let op = thread[0].data.children[0].data
+    const op = thread[0].data.children[0].data
     op.points = op.score
     op.children = thread[1].data.children.map(x => {
       x = x.data

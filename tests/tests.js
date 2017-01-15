@@ -16,7 +16,7 @@ const embeddSpec = {
 }
 
 function extend (o1, o2) {
-  let result = {}
+  const result = {}
 
   for (let key in o1) { result[key] = o1[key] }
   for (let key in o2) { result[key] = o2[key] }
@@ -36,64 +36,64 @@ test('parseDate', t => {
   t.false(parseDate(), 'should return false if no value is passed')
 
   t.test('should return false if time passed is in the future', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now + 50)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now + 50)
 
     st.false(d)
     st.end()
   })
 
   t.test('should return "a few seconds ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now)
 
     st.equal(d, 'a few seconds ago')
     st.end()
   })
 
   t.test('should return "1 minute ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 60)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 60)
 
     st.equal(d, '1 minute ago')
     st.end()
   })
 
   t.test('should return "2 minutes ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 120)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 120)
 
     st.equal(d, '2 minutes ago')
     st.end()
   })
 
   t.test('should return "1 hour ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 3600)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 3600)
 
     st.equal(d, '1 hour ago')
     st.end()
   })
 
   t.test('should return "2 hours ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 7200)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 7200)
 
     st.equal(d, '2 hours ago')
     st.end()
   })
 
   t.test('should return "1 day ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 86400)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 86400)
 
     st.equal(d, '1 day ago')
     st.end()
   })
 
   t.test('should return "2 days ago"', st => {
-    let now = new Date().getTime() / 1000
-    let d = parseDate(now - 172800)
+    const now = new Date().getTime() / 1000
+    const d = parseDate(now - 172800)
 
     st.equal(d, '2 days ago')
     st.end()
@@ -114,7 +114,7 @@ test('embeddConstructor', t => {
 
   t.test('should throw an error if the spec object doesnt have a dataFmt method', st => {
     function embeddTest () {
-      let testSpec = extend({}, embeddSpec)
+      const testSpec = extend({}, embeddSpec)
       delete testSpec.dataFmt
 
       return embeddConstructor(testSpec)
@@ -126,7 +126,7 @@ test('embeddConstructor', t => {
 
   t.test('should throw an error if the spec object doesnt have a submitUrl property', st => {
     function embeddTest () {
-      let testSpec = extend({}, embeddSpec)
+      const testSpec = extend({}, embeddSpec)
       delete testSpec.submitUrl
 
       return embeddConstructor(testSpec)
@@ -138,7 +138,7 @@ test('embeddConstructor', t => {
 
   t.test('should throw an error if the spec object doesnt have a commentFmt method', st => {
     function embeddTest () {
-      let testSpec = extend({}, embeddSpec)
+      const testSpec = extend({}, embeddSpec)
       delete testSpec.commentFmt
 
       return embeddConstructor(testSpec)
@@ -150,7 +150,7 @@ test('embeddConstructor', t => {
 
   t.test('should throw an error if the spec object doesnt have a threadFmt method', st => {
     function embeddTest () {
-      let testSpec = extend({}, embeddSpec)
+      const testSpec = extend({}, embeddSpec)
       delete testSpec.threadFmt
 
       return embeddConstructor(testSpec)
@@ -164,7 +164,7 @@ test('embeddConstructor', t => {
 })
 
 test('redditConstructor', t => {
-  let reddit = redditConstructor(spec)
+  const reddit = redditConstructor(spec)
 
   t.test('should throw an error if no url has been specified', st => {
     function redditTest () {
@@ -189,7 +189,7 @@ test('redditConstructor', t => {
 })
 
 test('hnConstructor', t => {
-  let hn = hnConstructor(spec)
+  const hn = hnConstructor(spec)
 
   t.test('should throw an error if no url has been specified', st => {
     function hnTest () {

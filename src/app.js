@@ -11,9 +11,10 @@ const commentTemplate = require('./templates/comment.html')
 
 function contextConstructor () {
   let context = {}
-  let script = document.currentScript
-  let parent = script.parentNode
-  let container = document.createElement('div')
+
+  const script = document.currentScript
+  const parent = script.parentNode
+  const container = document.createElement('div')
 
   context.config = {
     element: container,
@@ -27,7 +28,7 @@ function contextConstructor () {
     debug: false
   }
 
-  let userConfig = script.innerHTML.length > 0
+  const userConfig = script.innerHTML.length > 0
         ? JSON.parse(script.innerHTML.trim())
         : {}
 
@@ -63,7 +64,7 @@ function contextConstructor () {
   }
 
   function extend (o1, o2) {
-    let result = {}
+    const result = {}
 
     for (let key in o1) {
       result[key] = o1[key]
@@ -76,11 +77,11 @@ function contextConstructor () {
   }
 
   function initListeners () {
-    let hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn'))
-    let redditBtn = document.querySelector('.embedd-container .reddit-btn')
-    let hnBtn = document.querySelector('.embedd-container .hn-btn')
-    let viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore'))
-    let moreBtn = document.querySelector('.embedd-container .more-btn')
+    const hideButtons = [].slice.call(document.querySelectorAll('.embedd-container .hideChildrenBtn'))
+    const redditBtn = document.querySelector('.embedd-container .reddit-btn')
+    const hnBtn = document.querySelector('.embedd-container .hn-btn')
+    const viewMoreBtns = [].slice.call(document.querySelectorAll('.embedd-container .viewMore'))
+    const moreBtn = document.querySelector('.embedd-container .more-btn')
 
     hideButtons.forEach(x => {
       x.addEventListener('click', hideChildren, false)
@@ -116,7 +117,7 @@ function contextConstructor () {
   }
 
   function loadOnScroll () {
-    let maxScroll = document.body.scrollHeight - window.innerHeight
+    const maxScroll = document.body.scrollHeight - window.innerHeight
     if (maxScroll - window.scrollY < 20) {
       window.removeEventListener('scroll', loadOnScroll, false)
       renderMore(context)
@@ -124,7 +125,7 @@ function contextConstructor () {
   }
 
   function renderHtml (obj) {
-    let data = extend({}, obj)
+    const data = extend({}, obj)
     data.config = extend({}, obj.config)
 
     data.redditActive = () => {
@@ -139,7 +140,7 @@ function contextConstructor () {
       data.config.loadMore = false
     }
 
-    let html = mustache.render(mainTemplate, data, { comment: commentTemplate })
+    const html = mustache.render(mainTemplate, data, { comment: commentTemplate })
 
     if (context.config.debug) {
       console.log(data)
@@ -150,8 +151,8 @@ function contextConstructor () {
   }
 
   function renderMore ({ data, config, redditActive }) {
-    let template = '{{#comments}}{{> comment}}{{/comments}}'
-    let element = document.querySelector('.embedd-container .comments')
+    const template = '{{#comments}}{{> comment}}{{/comments}}'
+    const element = document.querySelector('.embedd-container .comments')
 
     data.comments = data.next.slice(0, config.limit)
     data.next = data.next.slice(config.limit)
@@ -162,11 +163,11 @@ function contextConstructor () {
       data.redditActive = redditActive
     }
 
-    let html = mustache.render(template, data, { comment: commentTemplate })
+    const html = mustache.render(template, data, { comment: commentTemplate })
     element.insertAdjacentHTML('beforeend', html)
 
     if (!data.hasMore) {
-      let moreBtn = document.querySelector('.embedd-container .more-btn')
+      const moreBtn = document.querySelector('.embedd-container .more-btn')
 
       if (moreBtn) {
         moreBtn.style.display = 'none'
@@ -179,16 +180,16 @@ function contextConstructor () {
   }
 
   function hideChildren (e) {
-    let el = e.target
-    let parentComment = el.parentNode.parentNode.parentNode
+    const el = e.target
+    const parentComment = el.parentNode.parentNode.parentNode
 
     parentComment.classList.toggle('closed')
   }
 
   function showMoreComments (e) {
-    let el = e.currentTarget
-    let parent = el.parentElement
-    let comments = parent.querySelector('.children')
+    const el = e.currentTarget
+    const parent = el.parentElement
+    const comments = parent.querySelector('.children')
 
     function showComment (c, count) {
       if (c && count !== 3) {
@@ -209,15 +210,15 @@ function contextConstructor () {
   function getDisplayVal (el) {
     if (el.currentStyle) {
       return el.currentStyle.display
-    } else {
-      return window.getComputedStyle(el, null).getPropertyValue('display')
     }
+
+    return window.getComputedStyle(el, null).getPropertyValue('display')
   }
 
   context.init = () => {
-    let {reddit, hn} = context.clients
-    let service = context.clients[context.config.service]
-    let data = {}
+    const {reddit, hn} = context.clients
+    const service = context.clients[context.config.service]
+    const data = {}
 
     if (hn) {
       data.hasHn = hn.hasComments

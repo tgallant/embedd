@@ -3,9 +3,9 @@ import {decode, parseDate, embeddConstructor} from './embedd'
 export default function hnConstructor (spec) {
   if (!spec) { throw new Error('The HN constructor requires a spec object') }
 
-  let searchBase = 'https://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query='
-  let {url, limit} = spec
-  let embeddSpec = {}
+  const searchBase = 'https://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query='
+  const {url, limit} = spec
+  const embeddSpec = {}
 
   embeddSpec.query = searchBase + encodeURIComponent(url)
   embeddSpec.submitUrl = 'https://news.ycombinator.com/submit'
