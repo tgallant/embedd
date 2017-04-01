@@ -27,7 +27,7 @@
     "node-bourbon": "4.2.8",
     "node-neat": "1.7.2",
     "node-sass": "4.5.2",
-    "sass-loader": "4.1.1",
+    "sass-loader": "5.0.0",
     "snazzy": "^6.0.0",
     "style-loader": "0.16.1",
     "tape": "^4.6.0",
