@@ -2,23 +2,55 @@
 
 'use strict'
 
+const path = require('path')
+
 const bourbon = require('node-bourbon')
 const neat = require('node-neat')
 
 module.exports = {
   entry: './src/app.js',
   output: {
-    path: './dist/',
-    filename: 'embedd.js'
+    filename: 'embedd.js',
+    path: path.resolve(__dirname, 'dist')
   },
   module: {
-    loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel?presets[]=es2015' },
-      { test: /\.scss$/, loaders: [ 'style', 'css', 'sass' ] },
-      { test: /\.html$/, loader: 'html-loader?minimize=false' }
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [ 'es2015' ]
+            }
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          {
+            loader: 'sass-loader',
+            options: {
+              includePaths: bourbon.with(neat.includePaths)
+            }
+          }
+        ]
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: {
+              minimize: false
+            }
+          }
+        ]
+      }
     ]
-  },
-  sassLoader: {
-    includePaths: bourbon.with(neat.includePaths)
   }
 }
