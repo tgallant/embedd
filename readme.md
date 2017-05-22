@@ -1,5 +1,7 @@
 # Embedd
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/tgallant/embedd.svg)](https://greenkeeper.io/)
+
 [![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
 [![CircleCI](https://circleci.com/gh/tgallant/embedd.svg?style=svg)](https://circleci.com/gh/tgallant/embedd)
