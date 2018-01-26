@@ -7,7 +7,7 @@ export default function redditConstructor (spec) {
   const embeddSpec = {}
 
   embeddSpec.base = 'https://www.reddit.com'
-  embeddSpec.searchQs = '/search.json?q=url:'
+  embeddSpec.searchQs = '/search.json?q='
   embeddSpec.query = embeddSpec.base + embeddSpec.searchQs + url
   embeddSpec.submitUrl = 'https://www.reddit.com/submit'
   embeddSpec.limit = limit
