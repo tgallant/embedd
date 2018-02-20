@@ -29,8 +29,8 @@ function contextConstructor () {
   }
 
   const userConfig = script.innerHTML.length > 0
-        ? JSON.parse(script.innerHTML.trim())
-        : {}
+    ? JSON.parse(script.innerHTML.trim())
+    : {}
 
   context.config = extend(context.config, userConfig)
 
