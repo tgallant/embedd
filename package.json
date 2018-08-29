@@ -28,7 +28,7 @@
     "node-neat": "~1.7.2",
     "node-sass": "~4.7.2",
     "sass-loader": "~6.0.6",
-    "snazzy": "^7.0.0",
+    "snazzy": "^8.0.0",
     "standard": "^11.0.0",
     "style-loader": "~0.20.0",
     "tape": "~4.9.0",
