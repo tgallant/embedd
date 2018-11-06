@@ -72,7 +72,7 @@ export function embeddConstructor (spec) {
       return !!x.num_comments
     })
 
-    async.map(activeThreads.slice(0, 10), ({id, subreddit}, callback) => {
+    async.map(activeThreads.slice(0, 10), ({ id, subreddit }, callback) => {
       if (id === 'undefined') { throw new Error('No ID specified') }
 
       const url = threadUrl({ sub: subreddit, id: id })

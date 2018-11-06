@@ -216,7 +216,7 @@ function contextConstructor () {
   }
 
   context.init = () => {
-    const {reddit, hn} = context.clients
+    const { reddit, hn } = context.clients
     const service = context.clients[context.config.service]
     const data = {}
 

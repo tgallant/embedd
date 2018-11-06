@@ -1,4 +1,4 @@
-import {parseDate, embeddConstructor} from '../src/embedd'
+import { parseDate, embeddConstructor } from '../src/embedd'
 import redditConstructor from '../src/reddit'
 import hnConstructor from '../src/hn'
 import test from 'tape'
