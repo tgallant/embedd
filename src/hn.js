@@ -1,10 +1,10 @@
-import {decode, parseDate, embeddConstructor} from './embedd'
+import { decode, parseDate, embeddConstructor } from './embedd'
 
 export default function hnConstructor (spec) {
   if (!spec) { throw new Error('The HN constructor requires a spec object') }
 
   const searchBase = 'https://hn.algolia.com/api/v1/search?restrictSearchableAttributes=url&query='
-  const {url, limit} = spec
+  const { url, limit } = spec
   const embeddSpec = {}
 
   embeddSpec.query = searchBase + encodeURIComponent(url)

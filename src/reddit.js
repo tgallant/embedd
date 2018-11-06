@@ -1,9 +1,9 @@
-import {decode, parseDate, embeddConstructor} from './embedd'
+import { decode, parseDate, embeddConstructor } from './embedd'
 
 export default function redditConstructor (spec) {
   if (!spec) { throw new Error('The Reddit constructor requires a spec object') }
 
-  const {url, limit} = spec
+  const { url, limit } = spec
   const embeddSpec = {}
 
   embeddSpec.base = 'https://www.reddit.com'
